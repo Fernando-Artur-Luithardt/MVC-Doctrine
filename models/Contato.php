@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
-use Models\Enums\Tipo;
 require_once 'models/Helper.php';
 
 #[Entity]
@@ -27,7 +26,7 @@ class Contato extends Helper
     private string $descricao;
 
     #[Column]
-    private Tipo $tipo;
+    private int $tipo;
 
     #[ManyToOne(inversedBy: 'items')]
     private Pessoa $pessoa;
@@ -66,12 +65,12 @@ class Contato extends Helper
         return $this;
     }
 
-    public function getTipo(): Tipo
+    public function getTipo(): int
     {
         return $this->tipo;
     }
 
-    public function setTipo(Tipo $tipo): Contato
+    public function setTipo(int $tipo): Contato
     {
         $this->tipo = $tipo;
 

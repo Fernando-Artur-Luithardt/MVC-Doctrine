@@ -83,4 +83,27 @@ class IndexController {
         echo json_encode($this->pessoa->createEdit($params, $collumns));
         exit;
     }
+
+    public function insertContato()
+    {
+        $params = $_POST;
+
+        if(strlen($params['descricao']) == 0){
+            echo json_encode(['message' => 'CPF Inválido']);
+            exit;
+        }
+        if(is_int($params['idPessoa'])){
+            echo json_encode(['message' => 'idPessoa Inválido']);
+            exit;
+        }
+
+        foreach ($params as $column => $value) {
+            if (is_callable([$this->contato, 'set' . $column])) {
+                $this->contato->{'set' . $column}($value);
+            }
+        }
+        $this->contato->insert();
+        echo json_encode(['message' => 'SUCCESS']);
+        exit;
+    }
 }

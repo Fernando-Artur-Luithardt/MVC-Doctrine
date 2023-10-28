@@ -74,7 +74,7 @@
             if(row.attr('loaded') == 0){
                 $.getJSON(`/getContatos?idPessoa=${idPessoa}`, function(data){
                     data?.forEach(function(item){
-                        generateContato(item)
+                        generateContato(row, item)
                     })
 
                     if(data.length == 0){
@@ -96,27 +96,36 @@
             }
         }
 
-        function generateContato(item){
+        $(document).on('click', '.novo-contato', function(){
+            const row = $(this).parents('.row-pessoa')
+            generateContato(row, row)
+
+        })
+        function generateContato(row, item){
+            row.find('.contatos-salvos.ignore').remove()
             row.find('.contatos-pessoa').append(`
                 <div class="row contatos-salvos" style="margin-top: 8px;" contatoId="${item?.id}" ${item?.id ? '' : 'isNew'}>
-                    <div class="col-6">
+                    <div class="col-5">
                         <select class="form-control tipo-contato">
                             <option value="0">Telefone</option>
                             <option value="1">Email</option>
                         </select>
                     </div>
-                    <div class="col-6">
-                        <input value="${item?.descricao}" class="descricao-contato form-control"></input>
+                    <div class="col-5">
+                        <input value="${item?.descricao || ''}" class="descricao-contato form-control"></input>
+                    </div>
+                    <div class="col-5">
+                        <button type="button" class="btn btn-info remover-contato">Remover</button>
                     </div>
                 </div>
             `)
-            $(document).find(`[contatoId="${item?.id}"]`)
+            $(document).find(`[contatoId="${item?.id}"] .tipo-contato`).val(item?.tipo)
         }
 
         function generatePessoa(item){
             if($(document).find(`.row-pessoa [idPessoa="${item?.id}"]`)[0] == undefined){
                 $('.accordion').append(`
-                    <div class="accordion-item row-pessoa" idPessoa="${item?.id  || ''}" nomePessoa="${item?.nome  || ''}" ${item?.id ? '' : 'isNew'} loaded="0">
+                    <div class="accordion-item row-pessoa" idPessoa="${item?.id  || ''}" nomePessoa="${item?.nome  || ''}" loaded="0">
                         <h2 class="accordion-header" id="panelsStayOpen-heading-${item?.id || ''}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-${item?.id || ''}" aria-expanded="false" aria-controls="panelsStayOpen-${item?.id || ''}">
                                 <div style="min-width: 60%;">
@@ -210,7 +219,7 @@
             const row = $(this).parents('.row-pessoa')
             Swal.fire({
                 title: `Deseja excluir pessoa ${row.attr('nomePessoa')}`,
-                showDenyButton: true,
+                showDenyButton: false,
                 showCancelButton: true,
                 confirmButtonText: 'Salvar',
                 denyButtonText: `Cancelar`,
@@ -245,11 +254,7 @@
                     id: row.attr('idPessoa')
                 },
                 success: function(data){
-                    Swal.fire(
-                        `Salvo!`,
-                        '',
-                        'success'
-                    )
+                    Swal.fire('Salvo!', '', 'success')
                     getDataHorarios()
                     return true
                 },
@@ -272,5 +277,52 @@
             }
             return true;
         }
+
+        function saveContato(row){
+            const descricao = row.find('.descricao-contato').val()
+            const tipo = row.find('.tipo-contato').val()
+            const idPessoa = row.parents('.row-pessoa').attr('idPessoa')
+            const id = row.attr('contatoId')
+            console.log(descricao);
+            console.log(tipo);
+            console.log(idPessoa);
+            if(descricao !== '' && tipo !== ''){
+                if(row.attr('isNew') !== undefined){
+                    $.ajax({
+                        type: "POST",
+                        url: '/insertContato',
+                        data: {
+                            descricao: descricao,
+                            tipo: tipo,
+                            idPessoa: idPessoa,
+                        },
+                        success: function(data){
+                            if(data.message == 'SUCCESS'){
+                                Swal.close();
+                                Swal.fire(
+                                    `Novo contato criado`,
+                                    '',
+                                    'success'
+                                )
+                            }else{
+                                Swal.close();
+                                Swal.fire(
+                                    `${data.message}`,
+                                    '',
+                                    'warning'
+                                )
+                            }
+                            getPessoas()
+                            return true
+                        },
+                        dataType: 'json'
+                    });
+                }
+            }
+        }
+
+        $(document).on('focusout', '.tipo-contato, .descricao-contato', function(){
+            saveContato($(this).parents('.contatos-salvos'))
+        })
     })
 </script>

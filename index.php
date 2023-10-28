@@ -45,6 +45,11 @@ switch ($request) {
         $controller = new IndexController();
         $controller->getContatos($queryParameters);
         break;
+    case '/insertContato':
+        require 'controllers/IndexController.php';
+        $controller = new IndexController();
+        $controller->insertContato();
+        break;
     default:
         http_response_code(404);
         echo 'Página no encontrada';
