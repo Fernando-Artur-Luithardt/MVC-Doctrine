@@ -80,7 +80,12 @@ class Contato extends Helper
 
     public function getByidPessoa(int $idPessoa)
     {
-        $query = $this->getQueryBuilder()->select('*')->from($this->getClassName())->where('idPessoa = :valor')->setParameter('valor', $idPessoa);
+        $query = $this->getQueryBuilder()
+            ->select('*')
+            ->from($this->getClassName())
+            ->where('idPessoa = :valor')
+            ->setParameter('valor', $idPessoa);
+
         if ($query->executeQuery()) {
             return $query->fetchAllAssociative();
         }

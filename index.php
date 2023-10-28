@@ -35,6 +35,11 @@ switch ($request) {
         $controller = new IndexController();
         $controller->getPessoas();
         break;
+    case '/editPessoa':
+        require 'controllers/IndexController.php';
+        $controller = new IndexController();
+        $controller->editPessoa($_POST);
+        break;
     case '/getContatos':
         require 'controllers/IndexController.php';
         $controller = new IndexController();

@@ -41,4 +41,18 @@ class Pessoa extends Helper
     {
         return ['id' => $this->id];
     }
+
+    public function getByCpf($cpf)
+    {
+        $query = $this->getQueryBuilder()
+            ->select('*')
+            ->from('pessoa')
+            ->where('cpf = :valor')
+            ->setParameter('valor', $cpf);
+
+        if ($query->executeQuery()) {
+            return $query->fetchAllAssociative();
+        }
+        return false;
+    }
 }

@@ -82,4 +82,56 @@ abstract class Helper
             return json_encode(['code' => 200]);
         }
     }
+
+    public function createEdit($params, $collumns)
+    {
+        if(isset($params['id'])){
+            if(!is_int($params['id'])){
+                unset($params['id']);
+            }else{
+                $query = $this->getQueryBuilder()
+                    ->select('*')
+                    ->from($this->getClassName())
+                    ->where('id = :valor')
+                    ->setParameter('valor', $params['id']);
+                $query->executeQuery();
+                $queryResult = $query->fetchAllAssociative();
+            }
+        }
+
+        //ATUALIZA REGISTRO EXISTENTE
+        if (!empty($queryResult)) {
+            $query = $this->getQueryBuilder();
+            $query
+                ->update($this->getClassName())
+                ->where('id = :id')
+                ->setParameter('id', $params['id']);
+            foreach($collumns as $key => $val){
+                if(isset($key, $params[$key]) && $val){
+                    $query->set($key, ':'.$key)
+                    ->setParameter($key, $params[$key]);
+                }
+            }
+
+            if ($query->executeQuery()) {
+                return $query->fetchAllAssociative();
+            }
+        }
+    }
+
+    public function get($id)
+    {
+        $query = $this->getQueryBuilder();
+        if(is_int($id)){
+            $query->select('*')
+                ->from($this->getClassName())
+                ->where('id = :id')
+                ->setParameter('id', $id);
+
+            if ($query->executeQuery()) {
+                return $query->fetchAllAssociative();
+            }
+        }
+        return false;
+    }
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,35 +55,7 @@
                     `)
                 }
                 for (var data in dados) {
-                    let item = dados[data];
-
-                    if($(document).find(`.row-pessoa [idPessoa="${item.id}"]`)[0] == undefined){
-                        $('.accordion').append(`
-                            <div class="accordion-item row-pessoa" idPessoa="${item.id}" nomePessoa="${item.nome}" loaded="0">
-                                <h2 class="accordion-header" id="panelsStayOpen-heading-${item.id}">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-${item.id}" aria-expanded="false" aria-controls="panelsStayOpen-${item.id}">
-                                        ${item.nome}
-                                    </button>
-                                </h2>
-                                <div id="panelsStayOpen-${item.id}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading-${item.id}">
-                                    <div class="accordion-body">
-                                        <button type="button" class="btn btn-info novo-contato" style="margin-bottom: 14px;">Novo contato</button>
-                                        <button type="button" class="btn btn-danger remover-pessoa" style="margin-bottom: 14px;">Remover pessoa</button>
-                                        <div class="contatos-pessoa overflow-auto overflow-y-hidden container" style="max-height: 20vh;">
-                                            <div class="row turno-dia" style="position: sticky; top: 0;">
-                                                <div class="col-6">
-                                                    Tipo
-                                                </div>
-                                                <div class="col-6">
-                                                    Contato
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `)
-                    }
+                    generatePessoa(dados[data])
                 }
                 let contador = 0;
                 $(document).find('.accordion-item').each(function() {
@@ -96,28 +68,15 @@
         }
         getPessoas()
 
-        $(document).on('click', '.accordion-item', function(){getAgendamentos($(this))})
+        $(document).on('click', '.accordion-item', function(){getContatos($(this))})
         function getContatos(row){
             let idPessoa = row.attr('idPessoa')
             if(row.attr('loaded') == 0){
                 $.getJSON(`/getContatos?idPessoa=${idPessoa}`, function(data){
                     data?.forEach(function(item){
-                        row.find('.contatos-pessoa').append(`
-                            <div class="row contatos-salvos" style="margin-top: 8px;" contatoId="${item.id}">
-                                <div class="col-6">
-                                    <select class="form-control tipo-contato">
-                                        <option value="0">Telefone</option>
-                                        <option value="1">Email</option>
-                                    </select>
-                                </div>
-                                <div class="col-6">
-                                    <input value="${item.descricao}" class="descricao-contato form-control"></input>
-                                </div>
-                            </div>
-                        `)
+                        generateContato(item)
                     })
 
-                    $(document).find(`[contatoId="${item.id}"]`)
                     if(data.length == 0){
                         row.find('.contatos-pessoa').append(`
                             <div class="row contatos-salvos ignore" style="margin-top: 8px;">
@@ -137,13 +96,122 @@
             }
         }
 
+        function generateContato(item){
+            row.find('.contatos-pessoa').append(`
+                <div class="row contatos-salvos" style="margin-top: 8px;" contatoId="${item?.id}" ${item?.id ? '' : 'isNew'}>
+                    <div class="col-6">
+                        <select class="form-control tipo-contato">
+                            <option value="0">Telefone</option>
+                            <option value="1">Email</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <input value="${item?.descricao}" class="descricao-contato form-control"></input>
+                    </div>
+                </div>
+            `)
+            $(document).find(`[contatoId="${item?.id}"]`)
+        }
+
+        function generatePessoa(item){
+            if($(document).find(`.row-pessoa [idPessoa="${item?.id}"]`)[0] == undefined){
+                $('.accordion').append(`
+                    <div class="accordion-item row-pessoa" idPessoa="${item?.id  || ''}" nomePessoa="${item?.nome  || ''}" ${item?.id ? '' : 'isNew'} loaded="0">
+                        <h2 class="accordion-header" id="panelsStayOpen-heading-${item?.id || ''}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-${item?.id || ''}" aria-expanded="false" aria-controls="panelsStayOpen-${item?.id || ''}">
+                                <div style="min-width: 60%;">
+                                    <input value="${item?.nome || ''}" class="form-control nome-pessoa"></input>
+                                </div>
+                                <div style="margin-left: 18px;">
+                                    Cpf: ${item?.cpf || ''}
+                                </div>
+                            </button>
+                        </h2>
+                        <div id="panelsStayOpen-${item?.id || ''}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading-${item?.id || ''}">
+                            <div class="accordion-body">
+                                <button type="button" class="btn btn-info novo-contato" style="margin-bottom: 14px;">Novo contato</button>
+                                <button type="button" class="btn btn-danger remover-pessoa" style="margin-bottom: 14px;">Remover pessoa</button>
+                                <div class="contatos-pessoa overflow-auto overflow-y-hidden container" style="max-height: 20vh;">
+                                    <div class="row turno-dia" style="position: sticky; top: 0;">
+                                        <div class="col-6">
+                                            Tipo
+                                        </div>
+                                        <div class="col-6">
+                                            Contato
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `)
+            }
+        }
+
+        $(document).on('click', '#gerarNovaPessoa', function(){
+            Swal.fire({
+            html: `
+                <form id="formNovaPessoa">
+                    <span>Nome</span>
+                    <input value="" class="form-control" id="new-pessoa-nome" required></input>
+                    <span>Cpf</span>
+                    <input value="" class="form-control" id="new-pessoa-cpf" required></input>
+                </form>
+            `,
+            title: `Nova pessoa`,
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: 'Salvar',
+            denyButtonText: `Cancelar`,
+            allowEscapeKey: false,
+            preConfirm: () => {
+                if($('#new-pessoa-cpf').val().length < 14){
+                    $('#new-pessoa-cpf').val('')
+                }
+                validateForm($(document).find('#formNovaPessoa'))
+                if(!validateForm($(document).find('#formNovaPessoa'))){
+                    return false;
+                }else{
+                    $.ajax({
+                        type: "POST",
+                        url: '/insertPessoa',
+                        data: {
+                            nome: $(document).find('#new-pessoa-nome').val(),
+                            cpf: $(document).find('#new-pessoa-cpf').val()
+                        },
+                        success: function(data){
+                            if(data.message == 'SUCCESS'){
+                                Swal.close();
+                                Swal.fire(
+                                    `Nova pessoa criada`,
+                                    '',
+                                    'success'
+                                )
+                            }else{
+                                Swal.close();
+                                Swal.fire(
+                                    `${data.message}`,
+                                    '',
+                                    'warning'
+                                )
+                            }
+                            getPessoas()
+                            return true
+                        },
+                        dataType: 'json'
+                    });
+                }
+                return false;
+            }})
+            $('#new-pessoa-cpf').mask('000.000.000-00', {reverse: true});
+        })
+
         $(document).on('click', '.remover-pessoa', function(){
             const row = $(this).parents('.row-pessoa')
             Swal.fire({
                 title: `Deseja excluir pessoa ${row.attr('nomePessoa')}`,
                 showDenyButton: true,
                 showCancelButton: true,
-                showCancelButton: false,
                 confirmButtonText: 'Salvar',
                 denyButtonText: `Cancelar`,
             }).then((result) => {
@@ -162,5 +230,47 @@
                 }
             })
         })
+
+        $(document).on('click', '.nome-pessoa', function(event) {
+            event.stopPropagation();
+        });
+
+        $(document).on('focusout', '.nome-pessoa',function() {
+            const row = $(this).parents('.row-pessoa');
+            $.ajax({
+                type: "POST",
+                url: '/editPessoa',
+                data: {
+                    nome: row.find('.nome-pessoa').val(),
+                    id: row.attr('idPessoa')
+                },
+                success: function(data){
+                    Swal.fire(
+                        `Salvo!`,
+                        '',
+                        'success'
+                    )
+                    getDataHorarios()
+                    return true
+                },
+                dataType: 'json'
+            });
+        })
+
+        function validateForm(form) {
+            const firstInvalidField = form.find(":invalid")[0];
+            if (firstInvalidField) {
+                if (form.find(":invalid").first().prop("required")) {
+                    firstInvalidField.setCustomValidity("Preencha este campo.");
+                    $(firstInvalidField).one("input", function () {
+                        firstInvalidField.setCustomValidity("");
+                    });
+                }
+
+                form[0].reportValidity();
+                return false;
+            }
+            return true;
+        }
     })
 </script>
