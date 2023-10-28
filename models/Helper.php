@@ -47,12 +47,21 @@ abstract class Helper
         $this->getQueryBuilder()->insert($this->getClassName())->values($insertArray)->executeQuery();   
     }
 
-    protected function getQueryBuilder(): QueryBuilder
+    public function getAll()
+    {
+        $query = $this->getQueryBuilder()->select('*')->from($this->getClassName());
+        if ($query->executeQuery()) {
+            return $query->fetchAllAssociative();
+        }
+        return false;
+    }
+
+    public function getQueryBuilder(): QueryBuilder
     {
         return $this->queryBuilder;
     }
 
-    private function getClassName()
+    public function getClassName()
     {
         $class = get_class($this);
         $dir = explode("\\", $class);

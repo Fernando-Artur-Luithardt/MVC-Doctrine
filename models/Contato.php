@@ -3,24 +3,25 @@
 declare(strict_types = 1);
 
 namespace Models;
-use App\Enums\Tipo;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
+use Models\Enums\Tipo;
+require_once 'models/Helper.php';
 
 #[Entity]
 #[Table('contato')]
-class Contato
+class Contato extends Helper
 {
     #[Id]
     #[Column, GeneratedValue]
     private int $id;
 
     #[Column]
-    private int $pessoaId;
+    private int $idPessoa;
 
     #[Column]
     private string $descricao;
@@ -36,9 +37,9 @@ class Contato
         return $this->id;
     }
 
-    public function getPessoaId(): int
+    public function getidPessoa(): int
     {
-        return $this->pessoaId;
+        return $this->idPessoa;
     }
 
     public function getDescricao(): string
@@ -75,5 +76,14 @@ class Contato
         $this->tipo = $tipo;
 
         return $this;
+    }
+
+    public function getByidPessoa(int $idPessoa)
+    {
+        $query = $this->getQueryBuilder()->select('*')->from($this->getClassName())->where('idPessoa = :valor')->setParameter('valor', $idPessoa);
+        if ($query->executeQuery()) {
+            return $query->fetchAllAssociative();
+        }
+        return false;
     }
 }
