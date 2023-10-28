@@ -86,7 +86,7 @@ abstract class Helper
     public function createEdit($params, $collumns)
     {
         if(isset($params['id'])){
-            if(!is_int($params['id'])){
+            if(!is_int(intval($params['id']))){
                 unset($params['id']);
             }else{
                 $query = $this->getQueryBuilder()
@@ -112,10 +112,8 @@ abstract class Helper
                     ->setParameter($key, $params[$key]);
                 }
             }
-
-            if ($query->executeQuery()) {
-                return $query->fetchAllAssociative();
-            }
+            $query->executeQuery();
+            return $query->fetchAllAssociative();
         }
     }
 

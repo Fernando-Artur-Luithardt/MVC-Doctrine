@@ -38,7 +38,7 @@ switch ($request) {
     case '/editPessoa':
         require 'controllers/IndexController.php';
         $controller = new IndexController();
-        $controller->editPessoa($_POST);
+        $controller->editPessoa();
         break;
     case '/getContatos':
         require 'controllers/IndexController.php';
@@ -49,6 +49,11 @@ switch ($request) {
         require 'controllers/IndexController.php';
         $controller = new IndexController();
         $controller->insertContato();
+        break;
+    case '/editContato':
+        require 'controllers/IndexController.php';
+        $controller = new IndexController();
+        $controller->editContato();
         break;
     default:
         http_response_code(404);

@@ -73,14 +73,16 @@ class IndexController {
         exit;
     }
 
-    public function editPessoa($params)
+    public function editPessoa()
     {
+        $params = $_POST;
         $collumns = [
             'nome'  => true,
             'cpf'   => false,
             'id'    => true,
         ];
-        echo json_encode($this->pessoa->createEdit($params, $collumns));
+        echo json_encode(['message' => 'SUCCESS']);
+        $this->pessoa->createEdit($params, $collumns);
         exit;
     }
 
@@ -103,6 +105,21 @@ class IndexController {
             }
         }
         $this->contato->insert();
+        echo json_encode(['message' => 'SUCCESS']);
+        exit;
+    }
+
+    public function editContato()
+    {
+        $params = $_POST;
+
+        $collumns = [
+            'id'        => true,
+            'tipo'      => true,
+            'descricao' => true,
+            'idPessoa'  => true,
+        ];
+        $this->contato->createEdit($params, $collumns);
         echo json_encode(['message' => 'SUCCESS']);
         exit;
     }

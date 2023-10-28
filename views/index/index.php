@@ -73,6 +73,7 @@
             let idPessoa = row.attr('idPessoa')
             if(row.attr('loaded') == 0){
                 $.getJSON(`/getContatos?idPessoa=${idPessoa}`, function(data){
+                    row.find('.contatos-salvos').remove()
                     data?.forEach(function(item){
                         generateContato(row, item)
                     })
@@ -114,7 +115,7 @@
                     <div class="col-5">
                         <input value="${item?.descricao || ''}" class="descricao-contato form-control"></input>
                     </div>
-                    <div class="col-5">
+                    <div class="col-2">
                         <button type="button" class="btn btn-info remover-contato">Remover</button>
                     </div>
                 </div>
@@ -254,7 +255,21 @@
                     id: row.attr('idPessoa')
                 },
                 success: function(data){
-                    Swal.fire('Salvo!', '', 'success')
+                    if(data.message == 'SUCCESS'){
+                        Swal.close();
+                        Swal.fire(
+                            `Alterações salvas!`,
+                            '',
+                            'success'
+                        )
+                    }else{
+                        Swal.close();
+                        Swal.fire(
+                            `${data.message}`,
+                            '',
+                            'warning'
+                        )
+                    }
                     getDataHorarios()
                     return true
                 },
@@ -312,7 +327,40 @@
                                     'warning'
                                 )
                             }
-                            getPessoas()
+                            getContatos(row.parents('.accordion-item'))
+                            return true
+                        },
+                        dataType: 'json'
+                    });
+                }else{
+                    console.log('else');
+                    console.log(id);
+                    $.ajax({
+                        type: "POST",
+                        url: '/editContato',
+                        data: {
+                            descricao: descricao,
+                            tipo: tipo,
+                            idPessoa: idPessoa,
+                            id: id
+                        },
+                        success: function(data){
+                            if(data.message == 'SUCCESS'){
+                                Swal.close();
+                                Swal.fire(
+                                    `Alterações salvas!`,
+                                    '',
+                                    'success'
+                                )
+                            }else{
+                                Swal.close();
+                                Swal.fire(
+                                    `${data.message}`,
+                                    '',
+                                    'warning'
+                                )
+                            }
+                            getContatos(row.parents('.accordion-item'))
                             return true
                         },
                         dataType: 'json'
