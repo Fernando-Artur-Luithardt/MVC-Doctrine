@@ -1,10 +1,23 @@
 <?php
-require_once '/xampp/htdocs/MVC-Doctrine/bootstrap/bootstrap.php';
+require 'vendor/autoload.php';
 
-$queryBuilder = $entityManager->createQueryBuilder();
+$request = $_SERVER['REQUEST_URI'];
+$baseDir = '/MVCDoctrine';
+$request = str_replace($baseDir, '', $request);
 
-$query = $queryBuilder->select('p.nome')->from(Pessoa::class, 'p')->getQuery();
-
-$pessoas = $query->getResult();
-print_r($pessoas);
-exit;
+switch ($request) {
+    case '/':
+        require 'controllers/IndexController.php';
+        $controller = new IndexController();
+        $controller->index();
+        break;
+    case '/insert':
+        require 'controllers/IndexController.php';
+        $controller = new IndexController();
+        $controller->insert();
+        break;
+    default:
+        http_response_code(404);
+        echo 'Página no encontrada';
+        break;
+}

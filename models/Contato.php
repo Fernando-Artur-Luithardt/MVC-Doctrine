@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace App\Entity;
+namespace Models;
 use App\Enums\Tipo;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
