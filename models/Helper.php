@@ -67,4 +67,19 @@ abstract class Helper
         $dir = explode("\\", $class);
         return end($dir);
     }
+
+    public function delete(int $id)
+    {
+        if ($id) {
+            $queryBuilder = $this->getQueryBuilder();
+            $queryBuilder
+                ->delete($this->getClassName())
+                ->where('id = :valor')
+                ->setParameter('valor', $id);
+    
+            $queryBuilder->executeQuery();
+
+            return json_encode(['code' => 200]);
+        }
+    }
 }

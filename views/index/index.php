@@ -24,7 +24,7 @@
     <div class="row">
         <div class="col-1"></div>
         <div class="col-10">
-            <div class="container rounded overflow-auto overflow-x-hidden tittle-agendamentos">Altere horários dias futuros</div>
+            <div class="container rounded overflow-auto overflow-x-hidden tittle-agendamentos"></div>
         </div>
         <div class="col-1"></div>
         <div class="col-1"></div>
@@ -43,23 +43,23 @@
 </html>
 <script>
     $(document).ready(function(){
-        function getHorariosFuturos(){
+        function getPessoas(){
             $.getJSON(`/getPessoas`, function(dados){
-                $('.row-horario-futuros').remove()
+                $('.row-pessoa').remove()
 
-                if(Object.keys(dados).length === 0){
+                if(dados.length === 0){
                     $('.accordion').append(`
-                        <div class="accordion-item row-horario-futuros text-center" style="margin: 8px;">
-                            Defina horários em configurações e serviços para cada barbeiro
+                        <div class="accordion-item row-pessoa text-center" style="margin: 8px;">
+                            Nenhum contato disponível
                         </div>
                     `)
                 }
                 for (var data in dados) {
                     let item = dados[data];
 
-                    if($(document).find(`.row-horario-futuros [idPessoa="${item.id}"]`)[0] == undefined){
+                    if($(document).find(`.row-pessoa [idPessoa="${item.id}"]`)[0] == undefined){
                         $('.accordion').append(`
-                            <div class="accordion-item row-horario-futuros" idPessoa="${item.id}" loaded="0">
+                            <div class="accordion-item row-pessoa" idPessoa="${item.id}" nomePessoa="${item.nome}" loaded="0">
                                 <h2 class="accordion-header" id="panelsStayOpen-heading-${item.id}">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-${item.id}" aria-expanded="false" aria-controls="panelsStayOpen-${item.id}">
                                         ${item.nome}
@@ -94,7 +94,7 @@
                 })
             })
         }
-        getHorariosFuturos()
+        getPessoas()
 
         $(document).on('click', '.accordion-item', function(){getAgendamentos($(this))})
         function getContatos(row){
@@ -128,8 +128,39 @@
                         `)
                     }
                     row.attr('loaded', '1')
+                }).fail(function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro ao carregar contatos',
+                    })
                 })
             }
         }
+
+        $(document).on('click', '.remover-pessoa', function(){
+            const row = $(this).parents('.row-pessoa')
+            Swal.fire({
+                title: `Deseja excluir pessoa ${row.attr('nomePessoa')}`,
+                showDenyButton: true,
+                showCancelButton: true,
+                showCancelButton: false,
+                confirmButtonText: 'Salvar',
+                denyButtonText: `Cancelar`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.getJSON(`/removerPessoa?idPessoa=${row.attr('idPessoa')}`)
+                        .done(function() {
+                            Swal.fire('Salvo!', '', 'success')
+                            row.remove()
+                        })
+                        .fail(function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro ao excluir pessoa',
+                            })
+                        })
+                }
+            })
+        })
     })
 </script>
