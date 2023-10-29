@@ -13,57 +13,17 @@ use Doctrine\ORM\Mapping\Table;
 require_once './models/Pessoa.php';
 require_once 'models/Pessoa.php';
 #[Entity]
-#[Table('contato')]
+#[Table(name: 'contato')]
 class Contato extends Helper
 {
-    #[ManyToOne(inversedBy: 'items')]
-    private Pessoa $pessoa;
-
-    public function __construct()
-    {
-        $this->pessoa = new \Models\Pessoa();
-    }
-    #[Column]
-    private int $pessoaId = 0;
-
-    #[Column]
+    #[Column(length: 120)]
     private string $descricao;
-
-    #[Column]
     private int $tipo;
-
-    public function setId(int $id)
-    {
-        $this->id = $id;
-    }
-
-    public function getPessoaId(): int
-    {
-        return $this->pessoaId;
-    }
+    private int $idPessoa;
 
     public function getDescricao(): string
     {
         return $this->descricao;
-    }
-
-    public function setDescricao(string $descricao): Contato
-    {
-        $this->descricao = $descricao;
-
-        return $this;
-    }
-
-    public function getPessoa(): Pessoa
-    {
-        return $this->pessoa;
-    }
-
-    public function setPessoa(Pessoa $pessoa): Contato
-    {
-        $this->pessoa = $pessoa;
-
-        return $this;
     }
 
     public function getTipo(): int
@@ -71,11 +31,29 @@ class Contato extends Helper
         return $this->tipo;
     }
 
-    public function setTipo(int $tipo): Contato
+    public function getIdPessoa(): string
+    {
+        return $this->idPessoa;
+    }
+
+    public function setId(int $id)
+    {
+        $this->id = $id;
+    }
+
+    public function setIdPessoa(int $idPessoa)
+    {
+        $this->idPessoa = $idPessoa;
+    }
+
+    public function setDescricao(string $descricao)
+    {
+        $this->descricao = $descricao;
+    }
+
+    public function setTipo(int $tipo)
     {
         $this->tipo = $tipo;
-
-        return $this;
     }
 
     public function getByidPessoa(int $idPessoa)

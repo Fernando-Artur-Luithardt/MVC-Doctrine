@@ -69,7 +69,7 @@
             })
         }
         getPessoas()
-        $(document).on('focusout', '#find-pessoa', () => {getPessoas()})
+        $(document).on('keyup', '#find-pessoa', () => {getPessoas()})
 
         $(document).on('click', '.accordion-item', function(){getContatos($(this))})
         function getContatos(row){
