@@ -1,4 +1,7 @@
 <?php
+
+use Controllers\IndexController;
+
 require 'vendor/autoload.php';
 
 $request = $_SERVER['REQUEST_URI'];
@@ -16,42 +19,41 @@ if(!empty($parsedUrl['query'])){
 
 switch ($request) {
     case '/':
-        require 'controllers/IndexController.php';
+        require 'Controllers/IndexController.php';
         $controller = new IndexController();
         $controller->index();
         break;
     case '/insertPessoa':
-        require 'controllers/IndexController.php';
         $controller = new IndexController();
         $controller->insertPessoa();
         break;
     case '/removerPessoa':
-        require 'controllers/IndexController.php';
+        require 'Controllers/IndexController.php';
         $controller = new IndexController();
         $controller->removerPessoa($queryParameters);
         break;
     case '/getPessoas':
-        require 'controllers/IndexController.php';
+        require 'Controllers/IndexController.php';
         $controller = new IndexController();
         $controller->getPessoas($queryParameters['filter']);
         break;
     case '/editPessoa':
-        require 'controllers/IndexController.php';
+        require 'Controllers/IndexController.php';
         $controller = new IndexController();
         $controller->editPessoa();
         break;
     case '/getContatos':
-        require 'controllers/IndexController.php';
+        require 'Controllers/IndexController.php';
         $controller = new IndexController();
         $controller->getContatos($queryParameters);
         break;
     case '/insertContato':
-        require 'controllers/IndexController.php';
+        require 'Controllers/IndexController.php';
         $controller = new IndexController();
         $controller->insertContato();
         break;
     case '/editContato':
-        require 'controllers/IndexController.php';
+        require 'Controllers/IndexController.php';
         $controller = new IndexController();
         $controller->editContato();
         break;
