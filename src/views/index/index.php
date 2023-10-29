@@ -6,7 +6,6 @@
     <title>Contatos</title>
 
     <!-- Fontes -->
-    <link href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">
@@ -47,7 +46,7 @@
 <script>
     $(document).ready(function(){
         function getPessoas(){
-            $.getJSON(`/pessoas/getPessoas?filter=${$('#find-pessoa').val()}`, function(dados){
+            $.getJSON(`index.php/pessoas/getPessoas?filter=${$('#find-pessoa').val()}`, function(dados){
                 $('.row-pessoa').remove()
 
                 if(dados.length === 0){
@@ -76,7 +75,7 @@
         function getContatos(row){
             let idPessoa = row.attr('idPessoa')
             if(row.attr('loaded') == 0){
-                $.getJSON(`/contatos/getContatos?idPessoa=${idPessoa}`, function(data){
+                $.getJSON(`index.php/contatos/getContatos?idPessoa=${idPessoa}`, function(data){
                     row.find('.contatos-salvos').remove()
                     data?.forEach(function(item){
                         generateContato(row, item)
@@ -175,10 +174,10 @@
                 </form>
             `,
             title: `Nova pessoa`,
-            showDenyButton: true,
+            showDenyButton: false,
             showCancelButton: true,
             confirmButtonText: 'Salvar',
-            denyButtonText: `Cancelar`,
+            cancelButtonText: `Cancelar`,
             allowEscapeKey: false,
             preConfirm: () => {
                 if($('#new-pessoa-cpf').val().length < 14){
@@ -190,7 +189,7 @@
                 }else{
                     $.ajax({
                         type: "POST",
-                        url: '/pessoas/insertPessoa',
+                        url: 'index.php/pessoas/insertPessoa',
                         data: {
                             nome: $(document).find('#new-pessoa-nome').val(),
                             cpf: $(document).find('#new-pessoa-cpf').val()
@@ -229,10 +228,10 @@
                 showDenyButton: false,
                 showCancelButton: true,
                 confirmButtonText: 'Salvar',
-                denyButtonText: `Cancelar`,
+                cancelButtonText: `Cancelar`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.getJSON(`/pessoas/removerPessoa?idPessoa=${row.attr('idPessoa')}`)
+                    $.getJSON(`index.php/pessoas/removerPessoa?idPessoa=${row.attr('idPessoa')}`)
                         .done(function() {
                             Swal.fire('Salvo!', '', 'success')
                             row.remove()
@@ -254,10 +253,10 @@
                 showDenyButton: false,
                 showCancelButton: true,
                 confirmButtonText: 'Salvar',
-                denyButtonText: `Cancelar`,
+                cancelButtonText: `Cancelar`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.getJSON(`/contatos/removerContato?contatoId=${row.attr('contatoId')}`)
+                    $.getJSON(`index.php/contatos/removerContato?contatoId=${row.attr('contatoId')}`)
                         .done(function() {
                             Swal.fire('Salvo!', '', 'success')
                             row.remove()
@@ -280,7 +279,7 @@
             const row = $(this).parents('.row-pessoa');
             $.ajax({
                 type: "POST",
-                url: '/pessoas/editPessoa',
+                url: 'index.php/pessoas/editPessoa',
                 data: {
                     nome: row.find('.nome-pessoa').val(),
                     id: row.attr('idPessoa')
@@ -334,7 +333,7 @@
                 if(row.attr('isNew') !== undefined){
                     $.ajax({
                         type: "POST",
-                        url: '/contatos/insertContato',
+                        url: 'index.php/contatos/insertContato',
                         data: {
                             descricao: descricao,
                             tipo: tipo,
@@ -365,7 +364,7 @@
                 }else{
                     $.ajax({
                         type: "POST",
-                        url: '/contatos/editContato',
+                        url: 'index.php/contatos/editContato',
                         data: {
                             descricao: descricao,
                             tipo: tipo,
