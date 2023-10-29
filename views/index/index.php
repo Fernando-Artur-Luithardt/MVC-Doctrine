@@ -25,6 +25,7 @@
         <div class="col-1"></div>
         <div class="col-10">
             <div class="container rounded overflow-auto overflow-x-hidden tittle-agendamentos">
+                <span>Pesquisar</span>
                 <input class="form-control" id="find-pessoa"></input>
             </div>
         </div>
@@ -144,8 +145,8 @@
                             <div class="accordion-body">
                                 <button type="button" class="btn btn-info novo-contato" style="margin-bottom: 14px;">Novo contato</button>
                                 <button type="button" class="btn btn-danger remover-pessoa" style="margin-bottom: 14px;">Remover pessoa</button>
-                                <div class="contatos-pessoa overflow-auto overflow-y-hidden container" style="max-height: 20vh;">
-                                    <div class="row turno-dia" style="position: sticky; top: 0;">
+                                <div class="contatos-pessoa overflow-auto overflow-y-hidden container" style="max-height: 24vh;">
+                                    <div class="row turno-dia" style="position: sticky; top: 0; margin-bottom: 12px;">
                                         <div class="col-6">
                                             Tipo
                                         </div>

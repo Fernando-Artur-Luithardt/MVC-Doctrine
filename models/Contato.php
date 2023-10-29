@@ -31,7 +31,7 @@ class Contato extends Helper
         return $this->tipo;
     }
 
-    public function getIdPessoa(): string
+    public function getIdPessoa(): int
     {
         return $this->idPessoa;
     }
