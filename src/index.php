@@ -1,6 +1,8 @@
 <?php
 
 use Controllers\IndexController;
+use Controllers\PessoasController;
+use Controllers\ContatosController;
 
 require 'vendor/autoload.php';
 
@@ -23,43 +25,44 @@ switch ($request) {
         $controller = new IndexController();
         $controller->index();
         break;
-    case '/insertPessoa':
-        $controller = new IndexController();
+    case '/pessoas/insertPessoa':
+        require 'Controllers/PessoasController.php';
+        $controller = new PessoasController();
         $controller->insertPessoa();
         break;
-    case '/removerPessoa':
-        require 'Controllers/IndexController.php';
-        $controller = new IndexController();
+    case '/pessoas/removerPessoa':
+        require 'Controllers/PessoasController.php';
+        $controller = new PessoasController();
         $controller->removerPessoa($queryParameters);
         break;
-    case '/removerContato':
-        require 'Controllers/IndexController.php';
-        $controller = new IndexController();
-        $controller->removerContato($queryParameters);
-        break;
-    case '/getPessoas':
-        require 'Controllers/IndexController.php';
-        $controller = new IndexController();
+    case '/pessoas/getPessoas':
+        require 'Controllers/PessoasController.php';
+        $controller = new PessoasController();
         $controller->getPessoas($queryParameters['filter']);
         break;
-    case '/editPessoa':
-        require 'Controllers/IndexController.php';
-        $controller = new IndexController();
+    case '/pessoas/editPessoa':
+        require 'Controllers/PessoasController.php';
+        $controller = new PessoasController();
         $controller->editPessoa();
         break;
-    case '/getContatos':
-        require 'Controllers/IndexController.php';
-        $controller = new IndexController();
+    case '/contatos/removerContato':
+        require 'Controllers/ContatosController.php';
+        $controller = new ContatosController();
+        $controller->removerContato($queryParameters);
+        break;
+    case '/contatos/getContatos':
+        require 'Controllers/ContatosController.php';
+        $controller = new ContatosController();
         $controller->getContatos($queryParameters);
         break;
-    case '/insertContato':
-        require 'Controllers/IndexController.php';
-        $controller = new IndexController();
+    case '/contatos/insertContato':
+        require 'Controllers/ContatosController.php';
+        $controller = new ContatosController();
         $controller->insertContato();
         break;
-    case '/editContato':
-        require 'Controllers/IndexController.php';
-        $controller = new IndexController();
+    case '/contatos/editContato':
+        require 'Controllers/ContatosController.php';
+        $controller = new ContatosController();
         $controller->editContato();
         break;
     default:

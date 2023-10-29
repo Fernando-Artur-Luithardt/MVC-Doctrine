@@ -47,7 +47,7 @@
 <script>
     $(document).ready(function(){
         function getPessoas(){
-            $.getJSON(`/getPessoas?filter=${$('#find-pessoa').val()}`, function(dados){
+            $.getJSON(`/pessoas/getPessoas?filter=${$('#find-pessoa').val()}`, function(dados){
                 $('.row-pessoa').remove()
 
                 if(dados.length === 0){
@@ -76,7 +76,7 @@
         function getContatos(row){
             let idPessoa = row.attr('idPessoa')
             if(row.attr('loaded') == 0){
-                $.getJSON(`/getContatos?idPessoa=${idPessoa}`, function(data){
+                $.getJSON(`/contatos/getContatos?idPessoa=${idPessoa}`, function(data){
                     row.find('.contatos-salvos').remove()
                     data?.forEach(function(item){
                         generateContato(row, item)
@@ -190,7 +190,7 @@
                 }else{
                     $.ajax({
                         type: "POST",
-                        url: '/insertPessoa',
+                        url: '/pessoas/insertPessoa',
                         data: {
                             nome: $(document).find('#new-pessoa-nome').val(),
                             cpf: $(document).find('#new-pessoa-cpf').val()
@@ -232,7 +232,7 @@
                 denyButtonText: `Cancelar`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.getJSON(`/removerPessoa?idPessoa=${row.attr('idPessoa')}`)
+                    $.getJSON(`/pessoas/removerPessoa?idPessoa=${row.attr('idPessoa')}`)
                         .done(function() {
                             Swal.fire('Salvo!', '', 'success')
                             row.remove()
@@ -257,7 +257,7 @@
                 denyButtonText: `Cancelar`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.getJSON(`/removerContato?contatoId=${row.attr('contatoId')}`)
+                    $.getJSON(`/contatos/removerContato?contatoId=${row.attr('contatoId')}`)
                         .done(function() {
                             Swal.fire('Salvo!', '', 'success')
                             row.remove()
@@ -280,7 +280,7 @@
             const row = $(this).parents('.row-pessoa');
             $.ajax({
                 type: "POST",
-                url: '/editPessoa',
+                url: '/pessoas/editPessoa',
                 data: {
                     nome: row.find('.nome-pessoa').val(),
                     id: row.attr('idPessoa')
@@ -334,7 +334,7 @@
                 if(row.attr('isNew') !== undefined){
                     $.ajax({
                         type: "POST",
-                        url: '/insertContato',
+                        url: '/contatos/insertContato',
                         data: {
                             descricao: descricao,
                             tipo: tipo,
@@ -364,7 +364,7 @@
                 }else{
                     $.ajax({
                         type: "POST",
-                        url: '/editContato',
+                        url: '/contatos/editContato',
                         data: {
                             descricao: descricao,
                             tipo: tipo,
