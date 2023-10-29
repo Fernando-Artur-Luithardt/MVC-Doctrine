@@ -3,24 +3,28 @@
 declare(strict_types = 1);
 
 namespace Models;
+use Models\Pessoa;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
-require_once 'models/Helper.php';
-
+require_once './models/Pessoa.php';
+require_once 'models/Pessoa.php';
 #[Entity]
 #[Table('contato')]
 class Contato extends Helper
 {
-    #[Id]
-    #[Column, GeneratedValue]
-    private int $id;
+    #[ManyToOne(inversedBy: 'items')]
+    private Pessoa $pessoa;
 
+    public function __construct()
+    {
+        $this->pessoa = new \Models\Pessoa();
+    }
     #[Column]
-    private int $idPessoa;
+    private int $pessoaId = 0;
 
     #[Column]
     private string $descricao;
@@ -28,17 +32,14 @@ class Contato extends Helper
     #[Column]
     private int $tipo;
 
-    #[ManyToOne(inversedBy: 'items')]
-    private Pessoa $pessoa;
-
-    public function getId(): int
+    public function setId(int $id)
     {
-        return $this->id;
+        $this->id = $id;
     }
 
-    public function getidPessoa(): int
+    public function getPessoaId(): int
     {
-        return $this->idPessoa;
+        return $this->pessoaId;
     }
 
     public function getDescricao(): string

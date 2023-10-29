@@ -7,9 +7,9 @@ require_once 'models/Helper.php';
 #[Table(name: 'pessoa')]
 class Pessoa extends Helper
 {
-    #[Column(length: 50)]
+    #[Column(length: 220)]
     private string $nome;
-    #[Column(length: 11)]
+    #[Column(length: 14)]
     private string $cpf;
 
     public function getNome(): string
