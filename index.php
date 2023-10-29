@@ -33,7 +33,7 @@ switch ($request) {
     case '/getPessoas':
         require 'controllers/IndexController.php';
         $controller = new IndexController();
-        $controller->getPessoas();
+        $controller->getPessoas($queryParameters['filter']);
         break;
     case '/editPessoa':
         require 'controllers/IndexController.php';

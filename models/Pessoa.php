@@ -55,4 +55,20 @@ class Pessoa extends Helper
         }
         return false;
     }
+
+    public function getFilter($filter)
+    {
+        $query = $this->getQueryBuilder()
+            ->select('*')
+            ->from('pessoa');
+
+        if ($filter !== false) {
+            $query->where('nome LIKE :valor')
+                ->setParameter('valor', '%' . $filter . '%');
+        }
+
+        if ($query->executeQuery()) {
+            return $query->fetchAllAssociative();
+        }
+    }
 }

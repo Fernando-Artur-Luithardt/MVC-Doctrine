@@ -43,9 +43,9 @@ class IndexController {
         exit;
     }
 
-    public function getPessoas()
+    public function getPessoas($queryParameters)
     {
-        echo json_encode($this->pessoa->getAll());
+        echo json_encode($this->pessoa->getFilter($queryParameters));
         exit;
     }
 

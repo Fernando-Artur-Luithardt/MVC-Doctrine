@@ -24,7 +24,9 @@
     <div class="row">
         <div class="col-1"></div>
         <div class="col-10">
-            <div class="container rounded overflow-auto overflow-x-hidden tittle-agendamentos"></div>
+            <div class="container rounded overflow-auto overflow-x-hidden tittle-agendamentos">
+                <input class="form-control" id="find-pessoa"></input>
+            </div>
         </div>
         <div class="col-1"></div>
         <div class="col-1"></div>
@@ -44,7 +46,7 @@
 <script>
     $(document).ready(function(){
         function getPessoas(){
-            $.getJSON(`/getPessoas`, function(dados){
+            $.getJSON(`/getPessoas?filter=${$('#find-pessoa').val()}`, function(dados){
                 $('.row-pessoa').remove()
 
                 if(dados.length === 0){
@@ -67,6 +69,7 @@
             })
         }
         getPessoas()
+        $(document).on('focusout', '#find-pessoa', () => {getPessoas()})
 
         $(document).on('click', '.accordion-item', function(){getContatos($(this))})
         function getContatos(row){
