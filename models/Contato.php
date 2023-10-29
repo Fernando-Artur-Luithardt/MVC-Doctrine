@@ -16,10 +16,19 @@ require_once 'models/Pessoa.php';
 #[Table(name: 'contato')]
 class Contato extends Helper
 {
+    #[Id]
+    #[Column, GeneratedValue]
+    private int $id;
+
+    #[Column]
+    #[ManyToOne(targetEntity: Pessoa::class)]
+    private int $idPessoa;
+
     #[Column(length: 120)]
     private string $descricao;
+
+    #[Column()]
     private int $tipo;
-    private int $idPessoa;
 
     public function getDescricao(): string
     {
