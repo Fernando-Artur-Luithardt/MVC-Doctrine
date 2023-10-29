@@ -1,4 +1,6 @@
 <?php
+//IMPORTANTE
+//Necessida de um .htaccess na pasta htdocs do xampp que sempre aponte todas as rotas para este index
 
 use Controllers\IndexController;
 use Controllers\PessoasController;
@@ -6,11 +8,10 @@ use Controllers\ContatosController;
 
 require 'vendor/autoload.php';
 
+//Separa os parâmetros da url e limpa o $request para ser utilizado no switch
 $request = $_SERVER['REQUEST_URI'];
 $baseDir = '/MVCDoctrine/src';
-
 $parsedUrl = parse_url($request);
-
 $getParams = parse_url($request, PHP_URL_QUERY);
 
 $request = str_replace($baseDir, '', $request);

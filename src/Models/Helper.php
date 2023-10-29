@@ -52,19 +52,13 @@ abstract class Helper
         if ($query->executeQuery()) {
             return $query->fetchAllAssociative();
         }
+        http_response_code(400);
         return false;
     }
 
     public function getQueryBuilder(): QueryBuilder
     {
         return $this->queryBuilder;
-    }
-
-    public function getClassName()
-    {
-        $class = get_class($this);
-        $dir = explode("\\", $class);
-        return end($dir);
     }
 
     public function delete(int $id)
@@ -80,10 +74,11 @@ abstract class Helper
 
             return json_encode(['code' => 200]);
         }
+        http_response_code(400);
         return json_encode(['message' => 'necessário enviar id pela url ?id=123']);
     }
 
-    public function createEdit($params, $collumns)
+    public function edit($params, $collumns)
     {
         if(isset($params['id'])){
             if(!is_int(intval($params['id']))){
@@ -106,6 +101,8 @@ abstract class Helper
                 ->update($this->getDatabaseName())
                 ->where('id = :id')
                 ->setParameter('id', $params['id']);
+            //Colunas livres para serem preenchidas
+            //somento colunas com o nome aqui podem ser preenchidas
             foreach($collumns as $key => $val){
                 if(isset($key, $params[$key]) && $val){
                     $query->set($key, ':'.$key)
@@ -115,6 +112,7 @@ abstract class Helper
             $query->executeQuery();
             return $query->fetchAllAssociative();
         }
+        http_response_code(400);
     }
 
     public function get($id)
@@ -130,6 +128,7 @@ abstract class Helper
                 return $query->fetchAllAssociative();
             }
         }
+        http_response_code(400);
         return false;
     }
 

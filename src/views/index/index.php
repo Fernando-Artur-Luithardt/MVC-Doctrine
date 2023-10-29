@@ -23,13 +23,13 @@
 <body>
     <div class="row">
         <div class="col-1"></div>
-        <div class="col-10">
-            <div class="container rounded overflow-auto overflow-x-hidden tittle-agendamentos">
+        <div class="col-5">
+            <div class="container rounded overflow-auto overflow-x-hidden tittle-agendamentos" style="margin-top: 10px;">
                 <span>Pesquisar</span>
-                <input class="form-control" id="find-pessoa"></input>
+                <input class="form-control" id="find-pessoa" style="margin-bottom: 22px; margin-top: 16px;"></input>
             </div>
         </div>
-        <div class="col-1"></div>
+        <div class="col-6"></div>
         <div class="col-1"></div>
         <div class="col-10">
             <div class="container container-funcionamento rounded overflow-auto overflow-x-hidden">
@@ -52,7 +52,7 @@
 
                 if(dados.length === 0){
                     $('.accordion').append(`
-                        <div class="accordion-item row-pessoa text-center" style="margin: 8px;">
+                        <div class="accordion-item row-pessoa text-center" style="margin: 10px;">
                             Nenhum contato disponível
                         </div>
                     `)
@@ -84,7 +84,7 @@
 
                     if(data.length == 0){
                         row.find('.contatos-pessoa').append(`
-                            <div class="row contatos-salvos ignore" style="margin-top: 8px;">
+                            <div class="row contatos-salvos ignore" style="margin-top: 10px;">
                                 <div class="col-12 text-center" style="margin-top: 16px;">
                                     Nenhum contato encontrado
                                 </div>
@@ -109,7 +109,7 @@
         function generateContato(row, item){
             row.find('.contatos-salvos.ignore').remove()
             row.find('.contatos-pessoa').append(`
-                <div class="row contatos-salvos row-contato" style="margin-top: 8px;" contatoId="${item?.id}" ${item?.id ? '' : 'isNew'}>
+                <div class="row contatos-salvos row-contato" style="margin-top: 10px;" contatoId="${item?.id}" ${item?.id ? '' : 'isNew'}>
                     <div class="col-5">
                         <select class="form-control tipo-contato">
                             <option value="0">Telefone</option>
@@ -356,6 +356,7 @@
                                     'warning'
                                 )
                             }
+                            row.parents('.accordion-item').attr('loaded', '0')
                             getContatos(row.parents('.accordion-item'))
                             return true
                         },
@@ -401,3 +402,8 @@
         })
     })
 </script>
+<style>
+    body {
+        background-color: #f1f1f1;
+    }
+</style>

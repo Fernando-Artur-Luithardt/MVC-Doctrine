@@ -17,14 +17,17 @@ class PessoasController
         $params = $_POST;
         if (strlen($params['cpf']) !== 14) {
             echo json_encode(['message' => 'CPF Inválido']);
+            http_response_code(400);
             exit;
         }
         if (strlen($params['nome']) === 0) {
             echo json_encode(['message' => 'NOME Inválido']);
+            http_response_code(400);
             exit;
         }
         if (!empty($this->pessoa->getByCpf($params['cpf']))) {
             echo json_encode(['message' => 'CPF Já cadastrado na base']);
+            http_response_code(400);
             exit;
         }
 
@@ -53,13 +56,16 @@ class PessoasController
     public function editPessoa()
     {
         $params = $_POST;
+
+        //Colunas livres para serem preenchidas
+        //somento colunas com o nome aqui podem ser preenchidas
         $collumns = [
             'nome' => true,
             'cpf' => false,
             'id' => true,
         ];
         echo json_encode(['message' => 'SUCCESS']);
-        $this->pessoa->createEdit($params, $collumns);
+        $this->pessoa->edit($params, $collumns);
         exit;
     }
 }
