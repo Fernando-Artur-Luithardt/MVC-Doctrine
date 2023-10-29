@@ -1,10 +1,12 @@
 <?php
 namespace Models;
 
+use DbConfigs;
 use Doctrine\ORM\ORMSetup;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Query\QueryBuilder;
+
 
 abstract class Helper
 {
@@ -17,14 +19,7 @@ abstract class Helper
 
     function __construct()
     {
-        $dbParams = [
-            'driver' => 'pdo_mysql',
-            'host' => 'localhost',
-            'charset' => 'utf8',
-            'user' => 'root',
-            'password' => '',
-            'dbname' => 'magazord',
-        ];
+        $dbParams = DbConfigs::getDbParams();
 
         $this->connection = DriverManager::getConnection($dbParams, ORMSetup::createAttributeMetadataConfiguration([__FILE__], false));
         $this->queryBuilder = $this->connection->createQueryBuilder();
