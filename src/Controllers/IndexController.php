@@ -55,13 +55,13 @@ class IndexController
 
     public function removerPessoa($queryParameters)
     {
-        if ($queryParameters['idPessoa']) {
-            echo json_encode($this->pessoa->delete($queryParameters['idPessoa']));
-            exit;
-        }
+        echo json_encode($this->pessoa->delete($queryParameters['idPessoa']));
+        exit;
+    }
 
-        http_response_code(404);
-        echo 'necessário enviar idPessoa pela url ?idPessoa=123';
+    public function removerContato($queryParameters)
+    {
+        echo json_encode($this->contato->delete($queryParameters['contatoId']));
         exit;
     }
 

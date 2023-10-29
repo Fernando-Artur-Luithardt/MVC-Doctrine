@@ -109,7 +109,7 @@
         function generateContato(row, item){
             row.find('.contatos-salvos.ignore').remove()
             row.find('.contatos-pessoa').append(`
-                <div class="row contatos-salvos" style="margin-top: 8px;" contatoId="${item?.id}" ${item?.id ? '' : 'isNew'}>
+                <div class="row contatos-salvos row-contato" style="margin-top: 8px;" contatoId="${item?.id}" ${item?.id ? '' : 'isNew'}>
                     <div class="col-5">
                         <select class="form-control tipo-contato">
                             <option value="0">Telefone</option>
@@ -247,6 +247,31 @@
             })
         })
 
+        $(document).on('click', '.remover-contato', function(){
+            const row = $(this).parents('.row-contato')
+            Swal.fire({
+                title: `Deseja excluir contato: ${row.find('.descricao-contato').val()}`,
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Salvar',
+                denyButtonText: `Cancelar`,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.getJSON(`/removerContato?contatoId=${row.attr('contatoId')}`)
+                        .done(function() {
+                            Swal.fire('Salvo!', '', 'success')
+                            row.remove()
+                        })
+                        .fail(function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro ao excluir contato',
+                            })
+                        })
+                }
+            })
+        })
+
         $(document).on('click', '.nome-pessoa', function(event) {
             event.stopPropagation();
         });
@@ -304,9 +329,7 @@
             const tipo = row.find('.tipo-contato').val()
             const idPessoa = row.parents('.row-pessoa').attr('idPessoa')
             const id = row.attr('contatoId')
-            console.log(descricao);
-            console.log(tipo);
-            console.log(idPessoa);
+
             if(descricao !== '' && tipo !== ''){
                 if(row.attr('isNew') !== undefined){
                     $.ajax({
@@ -339,8 +362,6 @@
                         dataType: 'json'
                     });
                 }else{
-                    console.log('else');
-                    console.log(id);
                     $.ajax({
                         type: "POST",
                         url: '/editContato',

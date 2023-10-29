@@ -32,6 +32,11 @@ switch ($request) {
         $controller = new IndexController();
         $controller->removerPessoa($queryParameters);
         break;
+    case '/removerContato':
+        require 'Controllers/IndexController.php';
+        $controller = new IndexController();
+        $controller->removerContato($queryParameters);
+        break;
     case '/getPessoas':
         require 'Controllers/IndexController.php';
         $controller = new IndexController();

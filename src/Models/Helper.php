@@ -69,7 +69,7 @@ abstract class Helper
 
     public function delete(int $id)
     {
-        if ($id) {
+        if (is_int(intval($id))) {
             $queryBuilder = $this->getQueryBuilder();
             $queryBuilder
                 ->delete($this->getDatabaseName())
@@ -80,6 +80,7 @@ abstract class Helper
 
             return json_encode(['code' => 200]);
         }
+        return json_encode(['message' => 'necessário enviar id pela url ?id=123']);
     }
 
     public function createEdit($params, $collumns)
