@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\Table;
 require_once './models/Pessoa.php';
@@ -16,12 +17,9 @@ require_once 'models/Pessoa.php';
 #[Table(name: 'contato')]
 class Contato extends Helper
 {
-    #[Id]
-    #[Column, GeneratedValue]
-    private int $id;
-
     #[Column]
-    #[ManyToOne(targetEntity: Pessoa::class)]
+    #[ManyToOne(targetEntity: Pessoa::class, inversedBy:"contatos")]
+    #[JoinColumn(name:"idPessoa", referencedColumnName:"id")]
     private int $idPessoa;
 
     #[Column(length: 120)]
@@ -43,11 +41,6 @@ class Contato extends Helper
     public function getIdPessoa(): int
     {
         return $this->idPessoa;
-    }
-
-    public function setId(int $id)
-    {
-        $this->id = $id;
     }
 
     public function setIdPessoa(int $idPessoa)

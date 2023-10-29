@@ -120,11 +120,13 @@
                         <input value="${item?.descricao || ''}" class="descricao-contato form-control"></input>
                     </div>
                     <div class="col-2">
-                        <button type="button" class="btn btn-info remover-contato">Remover</button>
+                        <button type="button" class="btn btn-danger remover-contato">Remover</button>
                     </div>
                 </div>
             `)
-            $(document).find(`[contatoId="${item?.id}"] .tipo-contato`).val(item?.tipo)
+            if(item?.id){
+                $(document).find(`[contatoId="${item?.id}"] .tipo-contato`).val(item?.tipo)
+            }
         }
 
         function generatePessoa(item){
@@ -137,7 +139,7 @@
                                     <input value="${item?.nome || ''}" class="form-control nome-pessoa"></input>
                                 </div>
                                 <div style="margin-left: 18px;">
-                                    Cpf: ${item?.cpf || ''}
+                                    CPF: ${item?.cpf || ''}
                                 </div>
                             </button>
                         </h2>

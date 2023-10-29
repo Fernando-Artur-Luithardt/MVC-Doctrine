@@ -1,7 +1,10 @@
 <?php
 namespace Models;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\OneToMany;
+
 require_once 'models/Helper.php';
 #[Entity]
 #[Table(name: 'pessoa')]
@@ -9,8 +12,15 @@ class Pessoa extends Helper
 {
     #[Column(length: 220)]
     private string $nome;
+
     #[Column(length: 14)]
     private string $cpf;
+
+    #[OneToMany(targetEntity: Contato::class, mappedBy: 'idPessoa')]
+    private Collection $contatos;
+
+    // #[OneToMany(targetEntity: Contato::class, mappedBy: 'invoice', cascade: ['persist', 'remove'])]
+    // private Collection $contatos;
 
     public function getNome(): string
     {
@@ -20,11 +30,6 @@ class Pessoa extends Helper
     public function getCpf(): string
     {
         return $this->cpf;
-    }
-
-    public function setId(int $id)
-    {
-        $this->id = $id;
     }
 
     public function setNome(string $nome)
