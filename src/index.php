@@ -2,7 +2,7 @@
 require 'vendor/autoload.php';
 
 $request = $_SERVER['REQUEST_URI'];
-$baseDir = '/MVCDoctrine';
+$baseDir = '/MVCDoctrine/src';
 
 $parsedUrl = parse_url($request);
 
