@@ -2,11 +2,6 @@ FROM php:8.1-cli
 RUN apt-get update && apt upgrade -y
 RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable mysqli
 
-# Configura o XDebug
-RUN pecl install xdebug
-RUN docker-php-ext-enable xdebug
-COPY ./debug/90-xdebug.ini "${PHP_INI_DIR}/conf.d"
-
 # Instala o Composer
 RUN apt install unzip
 RUN cd ~
@@ -20,4 +15,4 @@ WORKDIR /app
 RUN composer install
 
 # Apache e Debugger, respectivamente
-EXPOSE 8123
+EXPOSE 80

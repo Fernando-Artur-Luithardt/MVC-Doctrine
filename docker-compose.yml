@@ -10,6 +10,8 @@ services:
       - "3307:3306"
     networks:
       - magazord
+    volumes:
+      - "./migrations/schema.sql:/docker-entrypoint-initdb.d/1.sql"
   php:
     build:
       context: .
@@ -17,14 +19,14 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     ports:
-      - "8123:8123"
+      - "80:80"
     env_file:
       - .env.local
     volumes:
       - ./src:/app
     depends_on:
       - mysql
-    entrypoint: "php -S 0.0.0.0:8123"
+    entrypoint: "php -S 0.0.0.0:80"
     working_dir: /app
     networks:
       - magazord
