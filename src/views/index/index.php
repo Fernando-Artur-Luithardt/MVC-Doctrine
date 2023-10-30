@@ -163,11 +163,11 @@
                                 <button type="button" class="btn btn-danger remover-pessoa" style="margin-bottom: 14px;">Remover pessoa</button>
                                 <div class="contatos-pessoa overflow-auto overflow-y-hidden container" style="max-height: 24vh;">
                                     <div class="row turno-dia" style="position: sticky; top: 0; margin-bottom: 12px;">
-                                        <div class="col-6">
+                                        <div class="col-5">
                                             Tipo
                                         </div>
-                                        <div class="col-6">
-                                            Contato
+                                        <div class="col-7">
+                                            Descrição
                                         </div>
                                     </div>
                                 </div>
