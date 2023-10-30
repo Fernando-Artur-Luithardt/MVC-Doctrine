@@ -15,9 +15,7 @@
 <div>É necessário apenas clonar o repositório.</div>
 <div>Abrir o terminal na pasta do projeto.</div>
 <div>Entrar na pasta src pelo terminal (cd src) e rodar composer install.</div>
-<div>Rodar o comando: docker compose up -d --build no terminal do projeto (Necessário Docker estar aberto)</div>
-
-<div> (Enquanto está com o terminal aberto nas pasta principal do repositório)</div>
+<div>Rodar o comando: docker compose up -d --build no terminal do projeto (Necessário Docker estar aberto, e o terminal deve estar aberto nas pasta principal do repositório)</div>
 <div>Após isso é só abrir "localhost" no navegador e utilizar!</div>
 <br>
 <div>IMPORTANTE:</div>
