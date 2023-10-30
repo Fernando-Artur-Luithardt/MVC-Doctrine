@@ -24,6 +24,8 @@ switch ($request) {
         $controller = new IndexController();
         $controller->index();
         break;
+
+
     case '/pessoas/insertPessoa':
         require 'Controllers/PessoasController.php';
         $controller = new PessoasController();
@@ -44,6 +46,8 @@ switch ($request) {
         $controller = new PessoasController();
         $controller->editPessoa();
         break;
+
+
     case '/contatos/removerContato':
         require 'Controllers/ContatosController.php';
         $controller = new ContatosController();
@@ -64,6 +68,8 @@ switch ($request) {
         $controller = new ContatosController();
         $controller->editContato();
         break;
+
+
     default:
         http_response_code(404);
         echo 'Página não encontrada';
