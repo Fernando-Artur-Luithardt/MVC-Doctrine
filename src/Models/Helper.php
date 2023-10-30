@@ -29,19 +29,11 @@ abstract class Helper
         $this->queryBuilder = $this->connection->createQueryBuilder();
     }
 
-    public function insert()
+    public function insert($colunas): void
     {
-        $reflectionClass = new ReflectionClass(get_class($this));
-        $atts = $reflectionClass->getProperties();
-        $childAtt = [];
-        foreach ($atts as $att) {
-            if ($att->class === get_class($this)) {
-                $childAtt[] = $att->getName();
-            }
-        }
         $insertArray = [];
-        foreach ($childAtt as $att) {
-            $insertArray[$att] = '\'' . $this->{'get'.$att}(). '\'';
+        foreach ($colunas as $coluna) {
+            $insertArray[$coluna] = '\'' . $this->{'get'.$coluna}(). '\'';
         }
         $this->getQueryBuilder()->insert($this->getDatabaseName())->values($insertArray)->executeQuery();
     }
@@ -61,7 +53,7 @@ abstract class Helper
         return $this->queryBuilder;
     }
 
-    public function delete(int $id)
+    public function delete(int $id): bool|string
     {
         if (is_int(intval($id))) {
             $queryBuilder = $this->getQueryBuilder();
@@ -75,10 +67,10 @@ abstract class Helper
             return json_encode(['code' => 200]);
         }
         http_response_code(400);
-        return json_encode(['message' => 'necessário enviar id pela url ?id=123']);
+        return json_encode(['message' => 'Necessário enviar ID pela url. Exemplo: ?id=123']);
     }
 
-    public function edit($params, $collumns)
+    public function edit($params, $columns)
     {
         if(isset($params['id'])){
             if(!is_int(intval($params['id']))){
@@ -94,28 +86,26 @@ abstract class Helper
             }
         }
 
-        //ATUALIZA REGISTRO EXISTENTE
         if (!empty($queryResult)) {
             $query = $this->getQueryBuilder();
             $query
                 ->update($this->getDatabaseName())
                 ->where('id = :id')
                 ->setParameter('id', $params['id']);
-            //Colunas livres para serem preenchidas
-            //somento colunas com o nome aqui podem ser preenchidas
-            foreach($collumns as $key => $val){
-                if(isset($key, $params[$key]) && $val){
-                    $query->set($key, ':'.$key)
-                    ->setParameter($key, $params[$key]);
+            foreach($columns as $val){
+                if(isset($params[$val])){
+                    $query->set($val, ':'.$val)
+                    ->setParameter($val, $params[$val]);
                 }
             }
             $query->executeQuery();
             return $query->fetchAllAssociative();
         }
         http_response_code(400);
+        return null;
     }
 
-    public function get($id)
+    public function get($id): bool|array
     {
         $query = $this->getQueryBuilder();
         if(is_int($id)){
@@ -132,12 +122,14 @@ abstract class Helper
         return false;
     }
 
-    public function getId()
+    protected abstract function getDatabaseName(): string;
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId($id)
+    public function setId(int $id): void
     {
         $this->id = $id;
     }

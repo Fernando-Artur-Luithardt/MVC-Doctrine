@@ -1,6 +1,4 @@
 <?php
-//IMPORTANTE
-//Necessida de um .htaccess na pasta htdocs do xampp que sempre aponte todas as rotas para este index
 
 use Controllers\IndexController;
 use Controllers\PessoasController;
@@ -8,7 +6,6 @@ use Controllers\ContatosController;
 
 require 'vendor/autoload.php';
 
-//Separa os parâmetros da url e limpa o $request para ser utilizado no switch
 $request = $_SERVER['REQUEST_URI'];
 $baseDir = '/MVCDoctrine';
 $parsedUrl = parse_url($request);
@@ -20,8 +17,7 @@ if(!empty($parsedUrl['query'])){
     parse_str($parsedUrl['query'], $queryParameters);
     $request = str_replace('?'.$parsedUrl['query'], '', $request);
 }
-// print_r($request);
-// exit;
+
 switch ($request) {
     case '/':
         require 'Controllers/IndexController.php';
@@ -70,6 +66,6 @@ switch ($request) {
         break;
     default:
         http_response_code(404);
-        echo 'Página no encontrada';
+        echo 'Página não encontrada';
         break;
 }

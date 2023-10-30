@@ -3,7 +3,6 @@
 declare(strict_types = 1);
 
 namespace Models;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\JoinColumn;
@@ -26,7 +25,7 @@ class Contato extends Helper
     #[Column]
     private int $tipo;
 
-    public function getByidPessoa(int $idPessoa)
+    public function getByIdPessoa(int $idPessoa): bool|array
     {
         $query = $this->getQueryBuilder()
             ->select('*')
@@ -44,6 +43,8 @@ class Contato extends Helper
     {
         return 'contato';
     }
+
+    // GETTERS E SETTERS
 
     public function getIdPessoa(): int
     {

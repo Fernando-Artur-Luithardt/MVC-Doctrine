@@ -2,7 +2,7 @@
 
 namespace Models;
 
-use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
@@ -22,12 +22,19 @@ class Pessoa extends Helper
     #[OneToMany(mappedBy: 'idPessoa', targetEntity: Contato::class)]
     private Collection $contatos;
 
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->contatos = new ArrayCollection();
+    }
+
     public function getKey(): array
     {
         return ['id' => $this->getId()];
     }
 
-    public function getByCpf($cpf)
+    public function getByCpf($cpf): bool|array
     {
         $query = $this->getQueryBuilder()
             ->select('*')
@@ -55,6 +62,7 @@ class Pessoa extends Helper
         if ($query->executeQuery()) {
             return $query->fetchAllAssociative();
         }
+        return null;
     }
 
     protected function getDatabaseName(): string

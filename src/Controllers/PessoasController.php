@@ -12,7 +12,7 @@ class PessoasController
         $this->pessoa = new Pessoa();
     }
 
-    public function insertPessoa()
+    public function insertPessoa(): void
     {
         $params = $_POST;
         if (strlen($params['cpf']) !== 14) {
@@ -36,36 +36,44 @@ class PessoasController
                 $this->pessoa->{'set' . $column}($value);
             }
         }
-        $this->pessoa->insert();
+
+        $colunas = [
+            'cpf',
+            'nome'
+        ];
+        $this->pessoa->insert($colunas);
         echo json_encode(['message' => 'SUCCESS']);
         exit;
     }
 
-    public function getPessoas($queryParameters)
+    public function getPessoas($queryParameters): void
     {
         echo json_encode($this->pessoa->getFilter($queryParameters));
         exit;
     }
 
-    public function removerPessoa($queryParameters)
+    public function removerPessoa($queryParameters): void
     {
         echo json_encode($this->pessoa->delete($queryParameters['idPessoa']));
         exit;
     }
 
-    public function editPessoa()
+    public function editPessoa(): void
     {
         $params = $_POST;
 
-        //Colunas livres para serem preenchidas
-        //somento colunas com o nome aqui podem ser preenchidas
-        $collumns = [
-            'nome' => true,
-            'cpf' => false,
-            'id' => true,
+        if (strlen($params['nome']) > 220) {
+            echo json_encode(['message' => 'Nome ultrapassou o limite caracteres']);
+            http_response_code(400);
+            exit;
+        }
+
+        $colunas = [
+            'nome',
+            'id',
         ];
         echo json_encode(['message' => 'SUCCESS']);
-        $this->pessoa->edit($params, $collumns);
+        $this->pessoa->edit($params, $colunas);
         exit;
     }
 }
