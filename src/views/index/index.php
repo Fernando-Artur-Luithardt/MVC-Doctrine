@@ -25,7 +25,7 @@
         <div class="col-5">
             <div class="container rounded overflow-auto overflow-x-hidden tittle-agendamentos" style="margin-top: 10px;">
                 <span>Pesquisar</span>
-                <input class="form-control" id="find-pessoa" style="margin-bottom: 22px; margin-top: 16px;"></input>
+                <input class="form-control" id="find-pessoa" style="margin-bottom: 22px; margin-top: 16px;" />
             </div>
         </div>
         <div class="col-6"></div>
@@ -46,7 +46,7 @@
 <script>
     $(document).ready(function(){
         function getPessoas(){
-            $.getJSON(`/pessoas/getPessoas?filter=${$('#find-pessoa').val()}`, function(dados){
+            $.getJSON(`index.php/pessoas/getPessoas?filter=${$('#find-pessoa').val()}`, function(dados){
                 $('.row-pessoa').remove()
 
                 if(dados.length === 0){
@@ -69,13 +69,24 @@
             })
         }
         getPessoas()
-        $(document).on('keyup', '#find-pessoa', () => {getPessoas()})
+
+        let debounceTimer;
+        const inputField = $('#find-pessoa');
+
+        inputField.on('input', function() {
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(function() {
+                const valorDoCampo = inputField.val();
+                getPessoas()
+            }, 220);
+        });
 
         $(document).on('click', '.accordion-item', function(){getContatos($(this))})
         function getContatos(row){
             let idPessoa = row.attr('idPessoa')
             if(row.attr('loaded') == 0){
-                $.getJSON(`/contatos/getContatos?idPessoa=${idPessoa}`, function(data){
+                $.getJSON(`index.php/contatos/getContatos?idPessoa=${idPessoa}`, function(data){
                     row.find('.contatos-salvos').remove()
                     data?.forEach(function(item){
                         generateContato(row, item)
@@ -180,8 +191,9 @@
             cancelButtonText: `Cancelar`,
             allowEscapeKey: false,
             preConfirm: () => {
-                if($('#new-pessoa-cpf').val().length < 14){
-                    $('#new-pessoa-cpf').val('')
+                const newPessoaCpfResult = $('#new-pessoa-cpf')
+                if(newPessoaCpfResult.val().length < 14){
+                    newPessoaCpfResult.val('')
                 }
                 validateForm($(document).find('#formNovaPessoa'))
                 if(!validateForm($(document).find('#formNovaPessoa'))){
@@ -189,7 +201,7 @@
                 }else{
                     $.ajax({
                         type: "POST",
-                        url: '/pessoas/insertPessoa',
+                        url: 'index.php/pessoas/insertPessoa',
                         data: {
                             nome: $(document).find('#new-pessoa-nome').val(),
                             cpf: $(document).find('#new-pessoa-cpf').val()
@@ -231,7 +243,7 @@
                 cancelButtonText: `Cancelar`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.getJSON(`/pessoas/removerPessoa?idPessoa=${row.attr('idPessoa')}`)
+                    $.getJSON(`index.php/pessoas/removerPessoa?idPessoa=${row.attr('idPessoa')}`)
                         .done(function() {
                             Swal.fire('Salvo!', '', 'success')
                             row.remove()
@@ -256,7 +268,7 @@
                 cancelButtonText: `Cancelar`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.getJSON(`/contatos/removerContato?contatoId=${row.attr('contatoId')}`)
+                    $.getJSON(`index.php/contatos/removerContato?contatoId=${row.attr('contatoId')}`)
                         .done(function() {
                             Swal.fire('Salvo!', '', 'success')
                             row.remove()
@@ -279,7 +291,7 @@
             const row = $(this).parents('.row-pessoa');
             $.ajax({
                 type: "POST",
-                url: '/pessoas/editPessoa',
+                url: 'index.php/pessoas/editPessoa',
                 data: {
                     nome: row.find('.nome-pessoa').val(),
                     id: row.attr('idPessoa')
@@ -333,7 +345,7 @@
                 if(row.attr('isNew') !== undefined){
                     $.ajax({
                         type: "POST",
-                        url: '/contatos/insertContato',
+                        url: 'index.php/contatos/insertContato',
                         data: {
                             descricao: descricao,
                             tipo: tipo,
@@ -364,7 +376,7 @@
                 }else{
                     $.ajax({
                         type: "POST",
-                        url: '/contatos/editContato',
+                        url: 'index.php/contatos/editContato',
                         data: {
                             descricao: descricao,
                             tipo: tipo,
