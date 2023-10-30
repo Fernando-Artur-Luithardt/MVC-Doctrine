@@ -22,22 +22,26 @@
 <body>
     <div class="row">
         <div class="col-1"></div>
-        <div class="col-5">
-            <div class="container rounded overflow-auto overflow-x-hidden tittle-agendamentos" style="margin-top: 10px;">
-                <span>Pesquisar</span>
-                <input class="form-control" id="find-pessoa" style="margin-bottom: 22px; margin-top: 16px;" />
-            </div>
-        </div>
-        <div class="col-6"></div>
-        <div class="col-1"></div>
         <div class="col-10">
-            <div class="container container-funcionamento rounded overflow-auto overflow-x-hidden">
-                <div class="accordion">
-
+            <div class="row">
+                <div class="col-12">
+                    <div class="rounded overflow-auto overflow-x-hidden tittle-agendamentos" style="margin-top: 4px; min-width: 40%; float: left;">
+                        <span>Pesquisar</span>
+                        <input class="form-control" id="find-pessoa" style="margin-bottom: 22px; margin-top: 16px;" />
+                    </div>
                 </div>
-            </div>
-            <div class="container" style="margin-top: 12px;">
-                <button type="button" class="btn btn-success {{$cron['valor'] ? 'd-none' : ''}}" id="gerarNovaPessoa">Nova pessoa</button>
+                <div class="col-12">
+                    <div class="container-funcionamento rounded overflow-auto overflow-x-hidden">
+                        <div class="accordion">
+        
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div style="margin-top: 12px;">
+                        <button type="button" class="btn btn-success {{$cron['valor'] ? 'd-none' : ''}}" id="gerarNovaPessoa">Nova pessoa</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
