@@ -12,7 +12,10 @@
   <li>GIT</li>
 </ul>
 <h2>Como rodar a aplicação ?</h2>
-<div>É necessário apenas clonar o repositório e rodar o comando: docker compose up -d --build no terminal do projeto</div>
+<div>É necessário apenas clonar o repositório</div>
+<div>Entrar na pasta src pelo terminal e rodar composer install</div>
+<div>Rodar o comando: docker compose up -d --build no terminal do projeto (Necessário Docker estar aberto)</div>
+
 <div> (Enquanto está com o terminal aberto nas pasta principal do repositório)</div>
 <div>Após isso é só abrir "localhost" no navegador e utilizar!</div>
 <br>
