@@ -23,7 +23,7 @@
 <div>Após a build do docker é necessário alguns segundos até que o servidor crie a base, recomendo aguardar 30s após build para abrir a aplicação.</div>
 
 <br></br>
-<div>Criar uma novas pessoa:</div>
+<div>Criar nova pessoa:</div>
 <div>Após criar é possível editar apenas o nome</div>
 ![image](https://github.com/Fernando-Artur-Luithardt/MVCDoctrine/assets/91349414/d5007ffe-14a4-4de1-945e-7eb3867d8dd9)
 
