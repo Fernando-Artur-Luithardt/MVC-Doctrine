@@ -319,6 +319,7 @@
                                     '',
                                     'success'
                                 )
+                                getPessoas()
                             }else{
                                 Swal.close();
                                 Swal.fire(
@@ -327,7 +328,6 @@
                                     'warning'
                                 )
                             }
-                            getPessoas()
                             return true
                         },
                         error: function(){

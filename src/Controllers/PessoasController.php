@@ -85,9 +85,6 @@ class PessoasController
         if (strlen($params['nome']) > 220) {
             return ['message' => 'Nome ultrapassou o limite caracteres'];
         }
-        if (!empty($this->pessoa->getByCpf($params['cpf']))) {
-            return ['message' => 'CPF Já cadastrado na base'];
-        }
         return true;
     }
 }
