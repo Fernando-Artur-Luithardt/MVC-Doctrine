@@ -6,6 +6,6 @@ class IndexController
 {
     public function index(): void
     {
-        require 'views/index/index.php';
+        require 'views/index/index.html';
     }
 }

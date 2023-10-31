@@ -20,27 +20,29 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 <body>
-    <div class="row">
-        <div class="col-1"></div>
-        <div class="col-10">
-            <div class="row">
-                <div class="col-6">
-                    <span>Pesquisar</span>
-                    <input class="form-control" id="find-pessoa" style="margin-bottom: 22px; margin-top: 16px;" />
-                </div>
-                <div class="col-6">
-                    <button class="btn btn-info" id="find-pessoa-action" style="margin-top: 40px;">Pesquisar</button>
-                </div>
-                <div class="col-12">
-                    <div class="container-funcionamento rounded overflow-auto overflow-x-hidden">
-                        <div class="accordion">
-        
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <div class="row">
+                    <div class="col-6">
+                        <span>Pesquisar</span>
+                        <input class="form-control" id="find-pessoa" style="margin-bottom: 22px; margin-top: 16px;" />
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-info" id="find-pessoa-action" style="margin-top: 40px;">Pesquisar</button>
+                    </div>
+                    <div class="col-12">
+                        <div class="container-funcionamento rounded overflow-auto overflow-x-hidden" style="max-height: 72vh;">
+                            <div class="accordion">
+            
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-12">
-                    <div style="margin-top: 12px;">
-                        <button type="button" class="btn btn-success {{$cron['valor'] ? 'd-none' : ''}}" id="gerarNovaPessoa">Nova pessoa</button>
+                    <div class="col-12">
+                        <div style="margin-top: 12px;">
+                            <button type="button" class="btn btn-success {{$cron['valor'] ? 'd-none' : ''}}" id="gerarNovaPessoa">Nova pessoa</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -50,14 +52,23 @@
 </html>
 <script>
     $(document).ready(function(){
-        function getPessoas(){
-            $.getJSON(`index.php/pessoas/getPessoas?filter=${$('#find-pessoa').val()}`, function(dados){
+        function getPessoas(filter = false){
+            $('.accordion').append(`
+                <div class="row-pessoa-loading text-center ghost-loading" style="margin-top: 20px;">
+                    
+                </div>
+            `)
+            
+            if(filter){
                 $('.row-pessoa').remove()
+            }
+            $.getJSON(`index.php/pessoas/getPessoas?filter=${$('#find-pessoa').val()}`, function(dados){
+                $('.row-pessoa-loading').remove()
 
                 if(dados.length === 0){
                     $('.accordion').append(`
                         <div class="accordion-item row-pessoa text-center" style="margin: 10px;">
-                            Nenhuma pessoa disponível
+                            ${$('#find-pessoa').val() == '' ? 'Nenhuma pessoa disponível' : 'Nenhuma pessoa disponível com este filtro'}
                         </div>
                     `)
                 }
@@ -74,14 +85,25 @@
             })
         }
         getPessoas()
-        $(document).on('click', '#find-pessoa-action', () => {getPessoas()})
+        $(document).on('click', '#find-pessoa-action', () => {getPessoas(true)})
+        $("#find-pessoa").on("keydown", function(event) {
+            if (event.which === 13) {
+                getPessoas(true);
+            }
+        });
         $(document).on('click', '.accordion-item', function(){getContatos($(this))})
         function getContatos(row){
             let idPessoa = row.attr('idPessoa')
-
+            
             if(row.attr('loaded') == 0){
+                row.find('.contatos-pessoa').append(`
+                    <div class="contatos-loading text-center ghost-loading" style="margin-top: 20px;">
+                            
+                    </div>
+                `)
                 $.getJSON(`index.php/contatos/getContatos?idPessoa=${idPessoa}`, function(data){
                     row.find('.contatos-salvos').remove()
+                    row.find('.contatos-loading').remove()
                     data?.forEach(function(item){
                         generateContato(row, item)
                     })
@@ -121,7 +143,7 @@
                         <input value="" class="form-control" id="novo-pessoa-cpf" required></input>
                     </form>
                 `,
-                title: `Editar pessoa`,
+                title: `Novo contato`,
                 showDenyButton: false,
                 showCancelButton: true,
                 confirmButtonText: 'Salvar',
@@ -179,22 +201,24 @@
 
         function generateContato(row, item){
             row.find('.contatos-salvos.ignore').remove()
-            row.find('.contatos-pessoa').append(`
-                <div class="row contatos-salvos row-contato" style="margin-top: 10px;" contatoId="${item?.id}" ${item?.id ? '' : 'isNew'}>
-                    <div class="col-3">
-                        <div class="tipo-contato">${tipoToString(item?.tipo)}</div>
+            if(row.find(`.contatos-pessoa[contatoId="${item?.id}"]`)[0] == undefined){
+                row.find('.contatos-pessoa').append(`
+                    <div class="row contatos-salvos row-contato" style="margin-top: 10px;" contatoId="${item?.id}" ${item?.id ? '' : 'isNew'}>
+                        <div class="col-3">
+                            <div class="tipo-contato">${tipoToString(item?.tipo)}</div>
+                        </div>
+                        <div class="col-5">
+                            <div class="descricao-contato">${item?.descricao}</div>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-info edit-contato">Editar</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-danger remover-contato">Remover</button>
+                        </div>
                     </div>
-                    <div class="col-5">
-                        <div class="descricao-contato">${item?.descricao}</div>
-                    </div>
-                    <div class="col-2">
-                        <button type="button" class="btn btn-info edit-contato">Editar</button>
-                    </div>
-                    <div class="col-2">
-                        <button type="button" class="btn btn-danger remover-contato">Remover</button>
-                    </div>
-                </div>
-            `)
+                `)
+            }
         }
 
         function tipoToString(tipo){
@@ -210,20 +234,20 @@
         }
 
         function generatePessoa(item){
-            if($(document).find(`.row-pessoa [idPessoa="${item?.id}"]`)[0] == undefined){
+            if($(document).find(`.row-pessoa[idPessoa="${item?.id}"]`)[0] == undefined){
                 $('.accordion').append(`
-                    <div class="accordion-item row-pessoa" idPessoa="${item?.id  || ''}" loaded="0">
-                        <h2 class="accordion-header" id="panelsStayOpen-heading-${item?.id || ''}">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-${item?.id || ''}" aria-expanded="false" aria-controls="panelsStayOpen-${item?.id || ''}">
+                    <div class="accordion-item row-pessoa" idPessoa="${item?.id}" loaded="0">
+                        <h2 class="accordion-header" id="panelsStayOpen-heading-${item?.id}">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-${item?.id}" aria-expanded="false" aria-controls="panelsStayOpen-${item?.id}">
                                 <div style="min-width: 70%;">
-                                    <div class="nome-pessoa">${item?.nome || ''}</div>
+                                    <div class="nome-pessoa">${item?.nome}</div>
                                 </div>
                                 <div style="margin-left: 18px;" class="cpf-pessoa">
-                                    ${item?.cpf || ''}
+                                    ${item?.cpf}
                                 </div>
                             </button>
                         </h2>
-                        <div id="panelsStayOpen-${item?.id || ''}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading-${item?.id || ''}">
+                        <div id="panelsStayOpen-${item?.id}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading-${item?.id}">
                             <div class="accordion-body">
                                 <div style="margin-bottom: 14px;">
                                     <button type="button" class="btn btn-success novo-contato">Novo contato</button>
@@ -351,6 +375,7 @@
 
         $(document).on('click', '.remover-contato', function(){
             const row = $(this).parents('.row-contato')
+            const rowPessoa = row.parents('.row-pessoa');
             Swal.fire({
                 title: `Deseja excluir contato: ${row.find('.descricao-contato').text()}`,
                 showDenyButton: false,
@@ -363,6 +388,15 @@
                         .done(function() {
                             Swal.fire('Salvo!', '', 'success')
                             row.remove()
+                            if(rowPessoa.find('.contatos-salvos').length == 0){
+                                rowPessoa.find('.contatos-pessoa').append(`
+                                    <div class="row contatos-salvos ignore" style="margin-top: 10px;">
+                                        <div class="col-12 text-center" style="margin-top: 16px;">
+                                            Nenhum contato encontrado
+                                        </div>
+                                    </div>
+                                `)
+                            }
                         })
                         .fail(function() {
                             Swal.fire({
@@ -550,5 +584,13 @@
 <style>
     body {
         background-color: #f1f1f1;
+    }
+
+    .ghost-loading {
+        background-image: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        padding-top: 22px;
+        padding-bottom: 22px;
     }
 </style>
