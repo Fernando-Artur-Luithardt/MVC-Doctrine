@@ -58,6 +58,14 @@ class PessoasController
     public function editPessoa(): void
     {
         $params = $_POST;
+        $getPessoa = $this->pessoa->getByCpf($params['cpf']);
+        if(!empty($getPessoa))
+        if ($getPessoa[0]['id'] != $params['id']) {
+            echo json_encode(['message' => 'CPF Já cadastrado na base']);
+            http_response_code(400);
+            exit;
+        }
+
         $validate = $this->validatePessoa($params);
         if(is_array($validate)){
             echo json_encode($validate);
