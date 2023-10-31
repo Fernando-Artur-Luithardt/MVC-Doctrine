@@ -24,11 +24,12 @@
         <div class="col-1"></div>
         <div class="col-10">
             <div class="row">
-                <div class="col-12">
-                    <div class="rounded overflow-auto overflow-x-hidden tittle-agendamentos" style="margin-top: 4px; min-width: 40%; float: left;">
-                        <span>Pesquisar</span>
-                        <input class="form-control" id="find-pessoa" style="margin-bottom: 22px; margin-top: 16px;" />
-                    </div>
+                <div class="col-6">
+                    <span>Pesquisar</span>
+                    <input class="form-control" id="find-pessoa" style="margin-bottom: 22px; margin-top: 16px;" />
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-info" id="find-pessoa-action" style="margin-top: 40px;">Pesquisar</button>
                 </div>
                 <div class="col-12">
                     <div class="container-funcionamento rounded overflow-auto overflow-x-hidden">
@@ -73,22 +74,11 @@
             })
         }
         getPessoas()
-
-        let debounceTimer;
-        const inputField = $('#find-pessoa');
-
-        inputField.on('input', function() {
-            clearTimeout(debounceTimer);
-
-            debounceTimer = setTimeout(function() {
-                const valorDoCampo = inputField.val();
-                getPessoas()
-            }, 220);
-        });
-
+        $(document).on('click', '#find-pessoa-action', () => {getPessoas()})
         $(document).on('click', '.accordion-item', function(){getContatos($(this))})
         function getContatos(row){
             let idPessoa = row.attr('idPessoa')
+
             if(row.attr('loaded') == 0){
                 $.getJSON(`index.php/contatos/getContatos?idPessoa=${idPessoa}`, function(data){
                     row.find('.contatos-salvos').remove()
@@ -117,57 +107,144 @@
 
         $(document).on('click', '.novo-contato', function(){
             const row = $(this).parents('.row-pessoa')
-            generateContato(row, row)
+
+            const idPessoa = row.attr('idPessoa')
+            Swal.fire({
+                html: `
+                    <form id="formNovoContato">
+                        <span>Tipo</span>
+                        <select class="form-control" id="novo-tipo-contato">
+                            <option value="0">Telefone</option>
+                            <option value="1">Email</option>
+                        </select>
+                        <span>Descrição</span>
+                        <input value="" class="form-control" id="novo-pessoa-cpf" required></input>
+                    </form>
+                `,
+                title: `Editar pessoa`,
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Salvar',
+                cancelButtonText: `Cancelar`,
+                allowEscapeKey: false,
+                preConfirm: () => {
+                    validateForm($(document).find('#formNovoContato'))
+                    if(!validateForm($(document).find('#formNovoContato'))){
+                        return false;
+                    }else{
+                        Swal.close();
+                        $.ajax({
+                            type: "POST",
+                            url: 'index.php/contatos/insertContato',
+                            data: {
+                                descricao: $('#novo-pessoa-cpf').val(),
+                                tipo: $('#novo-tipo-contato').val(),
+                                idPessoa: idPessoa,
+                            },
+                            success: function(data){
+                                if(data.message == 'SUCCESS'){
+                                    Swal.close();
+                                    Swal.fire(
+                                        `Novo contato criado`,
+                                        '',
+                                        'success'
+                                    )
+                                }else{
+                                    Swal.close();
+                                    Swal.fire(
+                                        `${data.message}`,
+                                        '',
+                                        'warning'
+                                    )
+                                }
+                                row.attr('loaded', '0')
+                                getContatos(row)
+                                return true
+                            },
+                            error: function(){
+                                Swal.fire(
+                                    `Erro`,
+                                    '',
+                                    'warning'
+                                )
+                            },
+                            dataType: 'json'
+                        });
+                    }
+                    return false;
+                }
+            })
 
         })
+
         function generateContato(row, item){
             row.find('.contatos-salvos.ignore').remove()
             row.find('.contatos-pessoa').append(`
                 <div class="row contatos-salvos row-contato" style="margin-top: 10px;" contatoId="${item?.id}" ${item?.id ? '' : 'isNew'}>
-                    <div class="col-5">
-                        <select class="form-control tipo-contato">
-                            <option value="0">Telefone</option>
-                            <option value="1">Email</option>
-                        </select>
+                    <div class="col-3">
+                        <div class="tipo-contato">${tipoToString(item?.tipo)}</div>
                     </div>
                     <div class="col-5">
-                        <input value="${item?.descricao || ''}" class="descricao-contato form-control"></input>
+                        <div class="descricao-contato">${item?.descricao}</div>
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-info edit-contato">Editar</button>
                     </div>
                     <div class="col-2">
                         <button type="button" class="btn btn-danger remover-contato">Remover</button>
                     </div>
                 </div>
             `)
-            if(item?.id){
-                $(document).find(`[contatoId="${item?.id}"] .tipo-contato`).val(item?.tipo)
-            }
+        }
+
+        function tipoToString(tipo){
+            return tipo == 0 ? 'Telefone' : 'Email'
+        }
+
+        function tipoToValue(tipo){
+            if(tipo == 'Telefone')
+                return 0
+
+            if (tipo == 'Email')
+                return 1
         }
 
         function generatePessoa(item){
             if($(document).find(`.row-pessoa [idPessoa="${item?.id}"]`)[0] == undefined){
                 $('.accordion').append(`
-                    <div class="accordion-item row-pessoa" idPessoa="${item?.id  || ''}" nomePessoa="${item?.nome  || ''}" loaded="0">
+                    <div class="accordion-item row-pessoa" idPessoa="${item?.id  || ''}" loaded="0">
                         <h2 class="accordion-header" id="panelsStayOpen-heading-${item?.id || ''}">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-${item?.id || ''}" aria-expanded="false" aria-controls="panelsStayOpen-${item?.id || ''}">
-                                <div style="min-width: 60%;">
-                                    <input value="${item?.nome || ''}" class="form-control nome-pessoa"></input>
+                                <div style="min-width: 70%;">
+                                    <div class="nome-pessoa">${item?.nome || ''}</div>
                                 </div>
-                                <div style="margin-left: 18px;">
-                                    CPF: ${item?.cpf || ''}
+                                <div style="margin-left: 18px;" class="cpf-pessoa">
+                                    ${item?.cpf || ''}
                                 </div>
                             </button>
                         </h2>
                         <div id="panelsStayOpen-${item?.id || ''}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading-${item?.id || ''}">
                             <div class="accordion-body">
-                                <button type="button" class="btn btn-info novo-contato" style="margin-bottom: 14px;">Novo contato</button>
-                                <button type="button" class="btn btn-danger remover-pessoa" style="margin-bottom: 14px;">Remover pessoa</button>
-                                <div class="contatos-pessoa overflow-auto overflow-y-hidden container" style="max-height: 24vh;">
-                                    <div class="row turno-dia" style="position: sticky; top: 0; margin-bottom: 12px;">
-                                        <div class="col-5">
-                                            Tipo
-                                        </div>
-                                        <div class="col-7">
-                                            Descrição
+                                <div style="margin-bottom: 14px;">
+                                    <button type="button" class="btn btn-success novo-contato">Novo contato</button>
+                                    <button class="btn btn-info edit-pessoa">Editar pessoa</button>
+                                    <button type="button" class="btn btn-danger remover-pessoa">Remover pessoa</button>
+                                </div>
+                                <div class="overflow-auto overflow-y-hidden" style="max-height: 24vh;">
+                                    <div class="contatos-pessoa container-fluid">
+                                        <div class="row turno-dia" style="position: sticky; top: 0; margin-bottom: 12px; background-color: white;">
+                                            <div class="col-3">
+                                                Tipo
+                                            </div>
+                                            <div class="col-5">
+                                                Descrição
+                                            </div>
+                                            <div class="col-2">
+                                                Editar
+                                            </div>
+                                            <div class="col-2">
+                                                Remover
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -229,8 +306,16 @@
                             getPessoas()
                             return true
                         },
+                        error: function(){
+                            Swal.fire(
+                                `Erro`,
+                                '',
+                                'warning'
+                            )
+                        },
                         dataType: 'json'
                     });
+                    Swal.close();   
                 }
                 return false;
             }})
@@ -238,19 +323,19 @@
         })
 
         $(document).on('click', '.remover-pessoa', function(){
-            const row = $(this).parents('.row-pessoa')
+            const rowPessoa = $(this).parents('.row-pessoa')
             Swal.fire({
-                title: `Deseja excluir pessoa ${row.attr('nomePessoa')}`,
+                title: `Deseja excluir pessoa ${rowPessoa.find('.nome-pessoa').text()}`,
                 showDenyButton: false,
                 showCancelButton: true,
                 confirmButtonText: 'Salvar',
                 cancelButtonText: `Cancelar`,
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.getJSON(`index.php/pessoas/removerPessoa?idPessoa=${row.attr('idPessoa')}`)
+                    $.getJSON(`index.php/pessoas/removerPessoa?idPessoa=${rowPessoa.attr('idPessoa')}`)
                         .done(function() {
                             Swal.fire('Salvo!', '', 'success')
-                            row.remove()
+                            rowPessoa.remove()
                         })
                         .fail(function() {
                             Swal.fire({
@@ -265,7 +350,7 @@
         $(document).on('click', '.remover-contato', function(){
             const row = $(this).parents('.row-contato')
             Swal.fire({
-                title: `Deseja excluir contato: ${row.find('.descricao-contato').val()}`,
+                title: `Deseja excluir contato: ${row.find('.descricao-contato').text()}`,
                 showDenyButton: false,
                 showCancelButton: true,
                 confirmButtonText: 'Salvar',
@@ -290,37 +375,157 @@
         $(document).on('click', '.nome-pessoa', function(event) {
             event.stopPropagation();
         });
-
-        $(document).on('focusout', '.nome-pessoa',function() {
-            const row = $(this).parents('.row-pessoa');
-            $.ajax({
-                type: "POST",
-                url: 'index.php/pessoas/editPessoa',
-                data: {
-                    nome: row.find('.nome-pessoa').val(),
-                    id: row.attr('idPessoa')
-                },
-                success: function(data){
-                    if(data.message == 'SUCCESS'){
-                        Swal.close();
-                        Swal.fire(
-                            `Alterações salvas!`,
-                            '',
-                            'success'
-                        )
+        $(document).on('click', '.edit-pessoa',function() {
+            const row = $(this).parents('.row-pessoa')
+            const idPessoa = row.attr('idPessoa')
+            const nome = row.find('.nome-pessoa')
+            const cpf = row.find('.cpf-pessoa')
+            Swal.fire({
+                html: `
+                    <form id="formEditPessoa">
+                        <span>Nome</span>
+                        <input value="${nome.text()}" class="form-control" id="edit-pessoa-nome" required></input>
+                        <span>Cpf</span>
+                        <input value="${cpf.text()}" class="form-control" id="edit-pessoa-cpf" required></input>
+                    </form>
+                `,
+                title: `Editar pessoa`,
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Salvar',
+                cancelButtonText: `Cancelar`,
+                allowEscapeKey: false,
+                preConfirm: () => {
+                    const editPessoaCpfResult = $('#edit-pessoa-cpf')
+                    if(editPessoaCpfResult.val().length < 14){
+                        editPessoaCpfResult.val('')
+                    }
+                    validateForm($(document).find('#formEditPessoa'))
+                    if(!validateForm($(document).find('#formEditPessoa'))){
+                        return false;
                     }else{
                         Swal.close();
-                        Swal.fire(
-                            `${data.message}`,
-                            '',
-                            'warning'
-                        )
+                        const newNome = $(document).find('#edit-pessoa-nome').val()
+                        const newCpf = $(document).find('#edit-pessoa-cpf').val()
+                        $.ajax({
+                            type: "POST",
+                            url: 'index.php/pessoas/editPessoa',
+                            data: {
+                                id: idPessoa,
+                                nome: newNome,
+                                cpf: newCpf
+                            },
+                            success: function(data){
+                                if(data.message == 'SUCCESS'){
+                                    Swal.fire(
+                                        `Alterações salvas!`,
+                                        '',
+                                        'success'
+                                    )
+                                    nome.text(newNome)
+                                    cpf.text(newCpf)
+                                }else{
+                                    Swal.close();
+                                    Swal.fire(
+                                        `${data.message}`,
+                                        '',
+                                        'warning'
+                                    )
+                                }
+                                return true
+                            },
+                            error: function(){
+                                Swal.fire(
+                                    `Erro`,
+                                    '',
+                                    'warning'
+                                )
+                            },
+                            dataType: 'json'
+                        });
                     }
-                    getDataHorarios()
-                    return true
-                },
-                dataType: 'json'
-            });
+                    return false;
+                }
+            })
+
+            $('#edit-pessoa-cpf').mask('000.000.000-00', {reverse: true});
+        })
+
+        $(document).on('click', '.edit-contato', function(){
+            const row = $(this).parents('.row-contato')
+            const idPessoa = $(this).parents('.row-pessoa').attr('idPessoa')
+            const contatoId = row.attr('contatoId')
+            const tipo = row.find('.tipo-contato').text()
+            const descricao = row.find('.descricao-contato').text()
+            Swal.fire({
+                html: `
+                    <form id="formEditContato">
+                        <span>Tipo</span>
+                        <select class="form-control" id="edit-tipo-contato">
+                            <option value="0">Telefone</option>
+                            <option value="1">Email</option>
+                        </select>
+                        <span>Descrição</span>
+                        <input value="${descricao}" class="form-control" id="edit-pessoa-cpf" required></input>
+                    </form>
+                `,
+                title: `Editar pessoa`,
+                showDenyButton: false,
+                showCancelButton: true,
+                confirmButtonText: 'Salvar',
+                cancelButtonText: `Cancelar`,
+                allowEscapeKey: false,
+                preConfirm: () => {
+                    const newDescricao = $('#edit-pessoa-cpf').val()
+                    const newTipo = $('#edit-tipo-contato').val()
+                    validateForm($(document).find('#formEditContato'))
+                    if(!validateForm($(document).find('#formEditContato'))){
+                        return false;
+                    }else{
+                        Swal.close();
+                        $.ajax({
+                        type: "POST",
+                        url: 'index.php/contatos/editContato',
+                        data: {
+                            descricao: newDescricao,
+                            tipo: newTipo,
+                            idPessoa: idPessoa,
+                            id: contatoId
+                        },
+                        success: function(data){
+                            if(data.message == 'SUCCESS'){
+                                Swal.close();
+                                Swal.fire(
+                                    `Alterações salvas!`,
+                                    '',
+                                    'success'
+                                )
+                                row.find('.tipo-contato').text(tipoToString(newTipo))
+                                row.find('.descricao-contato').text(newDescricao)
+                            }else{
+                                Swal.close();
+                                Swal.fire(
+                                    `${data.message}`,
+                                    '',
+                                    'warning'
+                                )
+                            }
+                            return true
+                        },
+                        error: function(){
+                            Swal.fire(
+                                `Erro`,
+                                '',
+                                'warning'
+                            )
+                        },
+                        dataType: 'json'
+                    });
+                    }
+                    return false;
+                }
+            })
+            $('#edit-tipo-contato').val(tipoToValue(tipo))
         })
 
         function validateForm(form) {
@@ -338,83 +543,6 @@
             }
             return true;
         }
-
-        function saveContato(row){
-            const descricao = row.find('.descricao-contato').val()
-            const tipo = row.find('.tipo-contato').val()
-            const idPessoa = row.parents('.row-pessoa').attr('idPessoa')
-            const id = row.attr('contatoId')
-
-            if(descricao !== '' && tipo !== ''){
-                if(row.attr('isNew') !== undefined){
-                    $.ajax({
-                        type: "POST",
-                        url: 'index.php/contatos/insertContato',
-                        data: {
-                            descricao: descricao,
-                            tipo: tipo,
-                            idPessoa: idPessoa,
-                        },
-                        success: function(data){
-                            if(data.message == 'SUCCESS'){
-                                Swal.close();
-                                Swal.fire(
-                                    `Novo contato criado`,
-                                    '',
-                                    'success'
-                                )
-                            }else{
-                                Swal.close();
-                                Swal.fire(
-                                    `${data.message}`,
-                                    '',
-                                    'warning'
-                                )
-                            }
-                            row.parents('.accordion-item').attr('loaded', '0')
-                            getContatos(row.parents('.accordion-item'))
-                            return true
-                        },
-                        dataType: 'json'
-                    });
-                }else{
-                    $.ajax({
-                        type: "POST",
-                        url: 'index.php/contatos/editContato',
-                        data: {
-                            descricao: descricao,
-                            tipo: tipo,
-                            idPessoa: idPessoa,
-                            id: id
-                        },
-                        success: function(data){
-                            if(data.message == 'SUCCESS'){
-                                Swal.close();
-                                Swal.fire(
-                                    `Alterações salvas!`,
-                                    '',
-                                    'success'
-                                )
-                            }else{
-                                Swal.close();
-                                Swal.fire(
-                                    `${data.message}`,
-                                    '',
-                                    'warning'
-                                )
-                            }
-                            getContatos(row.parents('.accordion-item'))
-                            return true
-                        },
-                        dataType: 'json'
-                    });
-                }
-            }
-        }
-
-        $(document).on('focusout', '.tipo-contato, .descricao-contato', function(){
-            saveContato($(this).parents('.contatos-salvos'))
-        })
     })
 </script>
 <style>
