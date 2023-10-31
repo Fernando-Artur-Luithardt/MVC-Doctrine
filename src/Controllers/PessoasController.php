@@ -66,6 +66,7 @@ class PessoasController
         }
 
         $colunas = [
+            'cpf',
             'nome',
             'id',
         ];
