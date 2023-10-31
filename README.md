@@ -30,9 +30,8 @@
 <br></br>
 <div>Criar novo contato:</div>
 <div>Abrir o expansível de pessoa apenas apertando em cima da row, após isto apertar em Novo contato </div>
-<div>Após todos os campos serem preenchido basta apertar com o mouse fora do input que ele será salvo automaticamente!</div>
-![image](https://github.com/Fernando-Artur-Luithardt/MVCDoctrine/assets/91349414/da3f1168-58d4-4d8a-aa62-35d389cc4adb)
+<div>Será aberto um modal, é necessário apenas preencher e salvar!</div>
 <br></br>
 
 <div>Editar contato ou pessoa:</div>
-<div>Para editar um contato ou pessoa basta apenas alterar o campo desejado e após isso apertar fora do campo "outsideClick" e a alteração será salva automaticamente</div>
+<div>Para editar uma pessoa basta apenas apertar em Editar pessoa, e para editar um contato paste apenas apertar no botão de editar na linha do contato</div>
