@@ -36,7 +36,12 @@ class ContatosController
         $params = $_POST;
 
         if (strlen($params['descricao']) == 0) {
-            echo json_encode(['message' => 'CPF inválido']);
+            echo json_encode(['message' => 'Descrição inválida']);
+            http_response_code(400);
+            exit;
+        }
+        if (strlen($params['descricao']) > 120) {
+            echo json_encode(['message' => 'Descrição ultrapassou o limite caracteres']);
             http_response_code(400);
             exit;
         }
@@ -66,8 +71,9 @@ class ContatosController
     {
         $params = $_POST;
 
-        if (strlen($params['descricao']) > 120) {
-            echo json_encode(['message' => 'Descrição ultrapassou o limite caracteres']);
+        $validate = $this->validateContato($params);
+        if(is_array($validate)){
+            echo json_encode($validate);
             http_response_code(400);
             exit;
         }
@@ -81,5 +87,18 @@ class ContatosController
         $this->contato->edit($params, $colunas);
         echo json_encode(['message' => 'SUCCESS']);
         exit;
+    }
+
+    private function validateContato($params){
+        if (strlen($params['descricao']) == 0) {
+            return ['message' => 'Descrição inválida'];
+        }
+        if (strlen($params['descricao']) > 120) {
+            return ['message' => 'Descrição ultrapassou o limite caracteres'];
+        }
+        if (is_int($params['idPessoa'])) {
+            return ['message' => 'idPessoa inválido'];
+        }
+        return true;
     }
 }

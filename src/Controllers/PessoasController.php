@@ -15,18 +15,15 @@ class PessoasController
     public function insertPessoa(): void
     {
         $params = $_POST;
-        if (strlen($params['cpf']) !== 14) {
-            echo json_encode(['message' => 'CPF Inválido']);
-            http_response_code(400);
-            exit;
-        }
-        if (strlen($params['nome']) === 0) {
-            echo json_encode(['message' => 'NOME Inválido']);
-            http_response_code(400);
-            exit;
-        }
         if (!empty($this->pessoa->getByCpf($params['cpf']))) {
             echo json_encode(['message' => 'CPF Já cadastrado na base']);
+            http_response_code(400);
+            exit;
+        }
+
+        $validate = $this->validatePessoa($params);
+        if(is_array($validate)){
+            echo json_encode($validate);
             http_response_code(400);
             exit;
         }
@@ -61,9 +58,9 @@ class PessoasController
     public function editPessoa(): void
     {
         $params = $_POST;
-
-        if (strlen($params['nome']) > 220) {
-            echo json_encode(['message' => 'Nome ultrapassou o limite caracteres']);
+        $validate = $this->validatePessoa($params);
+        if(is_array($validate)){
+            echo json_encode($validate);
             http_response_code(400);
             exit;
         }
@@ -75,5 +72,22 @@ class PessoasController
         echo json_encode(['message' => 'SUCCESS']);
         $this->pessoa->edit($params, $colunas);
         exit;
+    }
+
+    private function validatePessoa($params)
+    {
+        if (strlen($params['cpf']) !== 14) {
+            return ['message' => 'CPF Inválido'];
+        }
+        if (strlen($params['nome']) === 0) {
+            return ['message' => 'NOME Inválido'];
+        }
+        if (strlen($params['nome']) > 220) {
+            return ['message' => 'Nome ultrapassou o limite caracteres'];
+        }
+        if (!empty($this->pessoa->getByCpf($params['cpf']))) {
+            return ['message' => 'CPF Já cadastrado na base'];
+        }
+        return true;
     }
 }
