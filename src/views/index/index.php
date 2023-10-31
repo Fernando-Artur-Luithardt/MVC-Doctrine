@@ -57,7 +57,7 @@
                 if(dados.length === 0){
                     $('.accordion').append(`
                         <div class="accordion-item row-pessoa text-center" style="margin: 10px;">
-                            Nenhum contato disponível
+                            Nenhuma pessoa disponível
                         </div>
                     `)
                 }
@@ -227,8 +227,8 @@
                             <div class="accordion-body">
                                 <div style="margin-bottom: 14px;">
                                     <button type="button" class="btn btn-success novo-contato">Novo contato</button>
-                                    <button class="btn btn-info edit-pessoa">Editar pessoa</button>
-                                    <button type="button" class="btn btn-danger remover-pessoa">Remover pessoa</button>
+                                    <button type="button" class="btn btn-danger remover-pessoa" style="float: right; margin-left: 8px;">Remover pessoa</button>
+                                    <button class="btn btn-info edit-pessoa" style="float: right;">Editar pessoa</button>
                                 </div>
                                 <div class="overflow-auto overflow-y-hidden" style="max-height: 24vh;">
                                     <div class="contatos-pessoa container-fluid">
@@ -336,6 +336,8 @@
                         .done(function() {
                             Swal.fire('Salvo!', '', 'success')
                             rowPessoa.remove()
+                            if($('.row-pessoa').length == 0)
+                                getPessoas()
                         })
                         .fail(function() {
                             Swal.fire({
