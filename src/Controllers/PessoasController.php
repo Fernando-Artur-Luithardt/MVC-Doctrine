@@ -74,7 +74,7 @@ class PessoasController
         exit;
     }
 
-    private function validatePessoa($params)
+    private function validatePessoa($params): bool|array
     {
         if (strlen($params['cpf']) !== 14) {
             return ['message' => 'CPF Inválido'];

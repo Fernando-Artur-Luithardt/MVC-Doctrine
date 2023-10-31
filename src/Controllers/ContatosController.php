@@ -89,7 +89,8 @@ class ContatosController
         exit;
     }
 
-    private function validateContato($params){
+    private function validateContato($params): bool|array
+    {
         if (strlen($params['descricao']) == 0) {
             return ['message' => 'Descrição inválida'];
         }
